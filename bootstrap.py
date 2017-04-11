@@ -7,15 +7,13 @@ from subprocess import call
 from flask import Flask, request, redirect, url_for, render_template, abort, Markup, make_response
 from werkzeug.utils import secure_filename
 from werkzeug.contrib.fixers import ProxyFix
+from config import config
 
 #
 # Theses location should works out-of-box if you use default settings
 #
 thispath = os.path.dirname(os.path.realpath(__file__))
 BASEPATH = os.path.join(thispath)
-
-IPXE_TEMPLATE = "/opt/ipxe-template"
-debug = True
 
 app = Flask(__name__, static_url_path='/kernel')
 app.url_map.strict_slashes = False
@@ -24,9 +22,11 @@ app.url_map.strict_slashes = False
 # Helpers
 #
 def ipxe_script(branch, network):
+    kernel = "%s/kernel/g8os-%s-generic.efi" % (config['BASE_HOST'], branch)
+
     script  = "#!ipxe\n"
     script += "dhcp\n"
-    script += "chain kernel/g8os-%s-generic.efi zerotier=%s\n" % (branch, network)
+    script += "chain %s zerotier=%s\n" % (kernel, network)
 
     return script
 
@@ -41,7 +41,7 @@ def iso_branch_network(branch, network):
 
     print("[+] copying template")
     with tempfile.TemporaryDirectory() as tmpdir:
-        shutil.copytree(IPXE_TEMPLATE, os.path.join(tmpdir, "src"), True)
+        shutil.copytree(config['IPXE_TEMPLATE'], os.path.join(tmpdir, "src"), True)
 
         print("[+] creating ipxe script")
         with open(os.path.join(tmpdir, "boot.ipxe"), 'w') as f:
@@ -72,4 +72,4 @@ def ipxe_branch_network(branch, network):
     return response
 
 print("[+] listening")
-app.run(host="0.0.0.0", port=5555, debug=debug, threaded=True)
+app.run(host="0.0.0.0", port=config['HTTP_PORT'], debug=config['DEBUG'], threaded=True)
