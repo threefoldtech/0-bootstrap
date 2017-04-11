@@ -35,7 +35,7 @@ def ipxe_script(branch, network):
 #
 @app.route('/iso/<branch>/<network>', methods=['GET'])
 def iso_branch_network(branch, network):
-    print("[+] branch: %s, network: %s", (branch, network))
+    print("[+] branch: %s, network: %s" % (branch, network))
 
     response = make_response("Request failed")
 
@@ -63,7 +63,7 @@ def iso_branch_network(branch, network):
 
 @app.route('/ipxe/<branch>/<network>', methods=['GET'])
 def ipxe_branch_network(branch, network):
-    print("[+] branch: %s, network: %s", (branch, network))
+    print("[+] branch: %s, network: %s" % (branch, network))
     script = ipxe_script(branch, network)
 
     response = make_response(script)
