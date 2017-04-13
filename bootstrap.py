@@ -18,7 +18,7 @@ from config import config
 thispath = os.path.dirname(os.path.realpath(__file__))
 BASEPATH = os.path.join(thispath)
 
-app = Flask(__name__, static_url_path='/kernels')
+app = Flask(__name__, static_url_path='/kernel')
 app.url_map.strict_slashes = False
 
 #
@@ -75,8 +75,8 @@ def ipxe_branch_network(branch, network):
     return response
 
 @app.route('/', methods=['GET'])
-def kernels_list():
-    target = os.listdir(config['KERNELS_PATH'])
+def kernel_list():
+    target = os.listdir(config['KERNEL_PATH'])
     target.sort()
 
     content = {
@@ -89,7 +89,7 @@ def kernels_list():
 
 
     for file in target:
-        endpoint = os.path.join(config['KERNELS_PATH'], file)
+        endpoint = os.path.join(config['KERNEL_PATH'], file)
         stats[file] = os.stat(endpoint, follow_symlinks=False)
         ordered[file] = stats[file].st_mtime
 
@@ -101,7 +101,7 @@ def kernels_list():
         if S_ISLNK(stats[file].st_mode):
             content['links'].append({
                 'name': file,
-                'target': os.readlink(os.path.join(config['KERNELS_PATH'], file))
+                'target': os.readlink(os.path.join(config['KERNEL_PATH'], file))
             })
 
     for file in starget:
@@ -114,7 +114,7 @@ def kernels_list():
                 'name': file,
             })
 
-    return render_template("kernels.html", **content)
+    return render_template("kernel.html", **content)
 
 print("[+] listening")
 app.run(host="0.0.0.0", port=config['HTTP_PORT'], debug=config['DEBUG'], threaded=True)

@@ -5,7 +5,7 @@ config = {
     'BASE_HOST': "http://somewhere.tld",
     'IPXE_TEMPLATE': "/opt/ipxe-template",
 
-    'KERNELS_PATH': 'kernels',
+    'KERNEL_PATH': '/',
 
     'HTTP_PORT': 5555,
 
