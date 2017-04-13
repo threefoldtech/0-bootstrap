@@ -18,7 +18,7 @@ from config import config
 thispath = os.path.dirname(os.path.realpath(__file__))
 BASEPATH = os.path.join(thispath)
 
-app = Flask(__name__, static_url_path='/kernel')
+app = Flask(__name__, static_url_path='/kernels')
 app.url_map.strict_slashes = False
 
 #
