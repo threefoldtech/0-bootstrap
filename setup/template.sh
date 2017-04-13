@@ -1,4 +1,6 @@
 #!/bin/bash
+set -e
+
 template="/opt/ipxe-template"
 
 echo "[+] preparing iPXE template on: ${template}"
