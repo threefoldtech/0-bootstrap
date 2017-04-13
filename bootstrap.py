@@ -3,7 +3,10 @@ import shutil
 import time
 import tempfile
 import shutil
+import datetime
+import operator
 from subprocess import call
+from stat import *
 from flask import Flask, request, redirect, url_for, render_template, abort, Markup, make_response
 from werkzeug.utils import secure_filename
 from werkzeug.contrib.fixers import ProxyFix
@@ -67,9 +70,51 @@ def ipxe_branch_network(branch, network):
     script = ipxe_script(branch, network)
 
     response = make_response(script)
-    response.headers["Content-Type"] = "plain/text"
+    response.headers["Content-Type"] = "text/plain"
 
     return response
+
+@app.route('/', methods=['GET'])
+def kernels_list():
+    target = os.listdir(config['KERNELS_PATH'])
+    target.sort()
+
+    content = {
+        'links': [],
+        'files': [],
+    }
+
+    stats = {}
+    ordered = {}
+
+
+    for file in target:
+        endpoint = os.path.join(config['KERNELS_PATH'], file)
+        stats[file] = os.stat(endpoint, follow_symlinks=False)
+        ordered[file] = stats[file].st_mtime
+
+    starget = sorted(ordered.items(), key=operator.itemgetter(1))
+    starget.reverse()
+
+    for file in starget:
+        file = file[0]
+        if S_ISLNK(stats[file].st_mode):
+            content['links'].append({
+                'name': file,
+                'target': os.readlink(os.path.join(config['KERNELS_PATH'], file))
+            })
+
+    for file in starget:
+        file = file[0]
+        if not S_ISLNK(stats[file].st_mode):
+            date = datetime.datetime.fromtimestamp(stats[file].st_mtime).strftime('%Y-%m-%d %H:%M:%S')
+            content['files'].append({
+                'size': "% 3dM" % (stats[file].st_size / (1024 * 1024)),
+                'date': date,
+                'name': file,
+            })
+
+    return render_template("kernels.html", **content)
 
 print("[+] listening")
 app.run(host="0.0.0.0", port=config['HTTP_PORT'], debug=config['DEBUG'], threaded=True)

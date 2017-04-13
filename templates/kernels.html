@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Kernels</title>
+
+    <style type="text/css">
+    body {
+        background: #1A1A1A;
+        color: #C2C2D5;
+        font-family: monospace;
+    }
+
+    h1 { color: #90EE90; }
+    pre {
+        text-align: center;
+        font-size: 10px;
+        margin-top: 30px;
+        color: #FFA500;
+    }
+
+    .content {
+        width: 1000px;
+        margin: auto;
+    }
+
+    .symlink { color: #00F5E9; }
+    .target::before { content: "» "; }
+    .target {
+        color: #FFFFFF;
+        display: block;
+        padding-left: 15px;
+    }
+
+    a:link, a:active, a:visited {
+        color: #C2C2D5;
+        text-decoration: none;
+        border-bottom: 1px solid #4D4D4D;
+    }
+
+    a:hover {
+        color: #FFFFFF;
+    }
+
+    ul { list-style: none; }
+    ul.files { padding: 0; }
+    ul.files li { line-height: 20px; }
+
+    ul.links li {
+        line-height: 25px;
+        margin-bottom: 15px;
+        font-size: 120%;
+    }
+
+    ul.links a:link, ul.links a:active, ul.links a:visited {
+        color: #00F5E9;
+        text-decoration: none;
+        border-bottom: 1px solid #99B1B9;
+    }
+    </style>
+</head>
+<body>
+<pre>
+ ######:                                                                                   &nbsp;
+ #######                         ##                  ##                                    &nbsp;
+ ##   :##                        ##                  ##                                    &nbsp;
+ ##    ##   .####.    .####.   #######    :#####.  #######    ##.####   :####    ##.###:   &nbsp;
+ ##   :##  .######.  .######.  #######   ########  #######    #######   ######   #######:  &nbsp;
+ #######.  ###  ###  ###  ###    ##      ##:  .:#    ##       ###.      #:  :##  ###  ###  &nbsp;
+ #######.  ##.  .##  ##.  .##    ##      ##### .     ##       ##         :#####  ##.  .##  &nbsp;
+ ##   :##  ##    ##  ##    ##    ##      .######:    ##       ##       .#######  ##    ##  &nbsp;
+ ##    ##  ##.  .##  ##.  .##    ##         .: ##    ##       ##       ## .  ##  ##.  .##  &nbsp;
+ ##   :##  ###  ###  ###  ###    ##.     #:.  :##    ##.      ##       ##:  ###  ###  ###  &nbsp;
+ ########  .######.  .######.    #####   ########    #####    ##       ########  #######:  &nbsp;
+ ######     .####.    .####.     .####   . ####      .####    ##         ###.##  ##.###:   &nbsp;
+                                                                                 ##        &nbsp;
+                                                                                 ##        &nbsp;
+                                                                                 ##        &nbsp;
+</pre>
+    <div class="content">
+    <h1>/latest-release/</h1>
+    <ul class="links">
+    {% for link in links %}
+        <li>
+            <span class="symlink"><a href="/kernel/{{ link['name'] }}">{{ link['name'] }}</a></span>
+            <span class="target">{{ link['target'] }}</span>
+        </li>
+    {% endfor %}
+    </ul>
+
+    <h1>/kernels/</h1>
+    <ul class="files">
+    {% for file in files %}
+        <li>-r-------- {{ file['size'] }}, {{ file['date'] }} »
+        <a href="/kernel/{{ file['name'] }}">{{ file['name'] }}</a></li>
+    {% endfor %}
+    </ul>
+    </div>
+</body>
+</html>
