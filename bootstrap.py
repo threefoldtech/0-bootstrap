@@ -18,14 +18,19 @@ from config import config
 thispath = os.path.dirname(os.path.realpath(__file__))
 BASEPATH = os.path.join(thispath)
 
-app = Flask(__name__, static_url_path='/kernel')
+app = Flask(__name__, static_url_path='/g8os/kernel')
 app.url_map.strict_slashes = False
 
 #
 # Helpers
 #
 def ipxe_script(branch, network):
-    kernel = "%s/kernel/g8os-%s-generic.efi" % (config['BASE_HOST'], branch)
+    kernel = os.path.join(config['KERNEL_PATH'], 'g8os-%s.efi' % branch)
+
+    if not os.path.exists(kernel):
+        abort(404)
+
+    kernel = "%s/kernel/g8os-%s.efi" % (config['BASE_HOST'], branch)
 
     script  = "#!ipxe\n"
     script += "dhcp\n"
