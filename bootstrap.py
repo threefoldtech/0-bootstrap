@@ -69,6 +69,34 @@ def iso_branch_network(branch, network):
 
     return response
 
+@app.route('/usb/<branch>/<network>', methods=['GET'])
+def usb_branch_network(branch, network):
+    print("[+] branch: %s, network: %s" % (branch, network))
+
+    response = make_response("Request failed")
+
+    print("[+] copying template")
+    with tempfile.TemporaryDirectory() as tmpdir:
+        shutil.copytree(config['IPXE_TEMPLATE'], os.path.join(tmpdir, "src"), True)
+
+        print("[+] creating ipxe script")
+        with open(os.path.join(tmpdir, "boot.ipxe"), 'w') as f:
+            f.write(ipxe_script(branch, network))
+
+        print("[+] building iso")
+        script = os.path.join(BASEPATH, "scripts", "mkusb.sh")
+        call(["bash", script, tmpdir])
+
+        isocontents = ""
+        with open(os.path.join(tmpdir, "ipxe.usb"), 'rb') as f:
+            isocontents = f.read()
+
+        response = make_response(isocontents)
+        response.headers["Content-Type"] = "application/octet-stream"
+        response.headers['Content-Disposition'] = "inline; filename=ipxe-g8os-%s.img" % branch
+
+    return response
+
 @app.route('/ipxe/<branch>/<network>', methods=['GET'])
 def ipxe_branch_network(branch, network):
     print("[+] branch: %s, network: %s" % (branch, network))
