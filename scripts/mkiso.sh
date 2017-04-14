@@ -10,6 +10,10 @@ echo "[+] root is: ${root}"
 cat ${root}/boot.ipxe
 
 pushd ${root}/src
-make bin/ipxe.iso EMBED=${root}/boot.ipxe
+
+MKCERT="letsencrypt-x3-cross.crt,letsencrypt-x3.crt"
+MKTRUST="letsencrypt-x3-cross.crt,letsencrypt-x3.crt"
+
+make bin/ipxe.iso EMBED=${root}/boot.ipxe CERT=${MKCERT} TRUST=${MKTRUST}
 
 cp bin/ipxe.iso ${root}/
