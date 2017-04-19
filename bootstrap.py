@@ -24,7 +24,7 @@ app.url_map.strict_slashes = False
 #
 # Helpers
 #
-def ipxe_script(branch, network):
+def ipxe_script(branch, network, extra=""):
     kernel = os.path.join(config['KERNEL_PATH'], 'g8os-%s.efi' % branch)
 
     if not os.path.exists(kernel):
@@ -34,7 +34,7 @@ def ipxe_script(branch, network):
 
     script  = "#!ipxe\n"
     script += "dhcp\n"
-    script += "chain %s zerotier=%s\n" % (kernel, network)
+    script += "chain %s zerotier=%s %s\n" % (kernel, network, extra)
 
     return script
 
@@ -101,6 +101,16 @@ def usb_branch_network(branch, network):
 def ipxe_branch_network(branch, network):
     print("[+] branch: %s, network: %s" % (branch, network))
     script = ipxe_script(branch, network)
+
+    response = make_response(script)
+    response.headers["Content-Type"] = "text/plain"
+
+    return response
+
+@app.route('/ipxe/<branch>/<network>/<extra>', methods=['GET'])
+def ipxe_branch_network_extra(branch, network, extra):
+    print("[+] branch: %s, network: %s, extra: %s" % (branch, network, extra))
+    script = ipxe_script(branch, network, extra)
 
     response = make_response(script)
     response.headers["Content-Type"] = "text/plain"
