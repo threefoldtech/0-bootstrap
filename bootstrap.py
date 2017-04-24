@@ -43,7 +43,11 @@ def ipxe_script(branch, network, extra=""):
 #
 @app.route('/iso/<branch>/<network>', methods=['GET'])
 def iso_branch_network(branch, network):
-    print("[+] branch: %s, network: %s" % (branch, network))
+    return iso_branch_network_extra(branch, network, "")
+
+@app.route('/iso/<branch>/<network>/<extra>', methods=['GET'])
+def iso_branch_network_extra(branch, network, extra):
+    print("[+] branch: %s, network: %s, extra: %s" % (branch, network, extra))
 
     response = make_response("Request failed")
 
@@ -53,7 +57,7 @@ def iso_branch_network(branch, network):
 
         print("[+] creating ipxe script")
         with open(os.path.join(tmpdir, "boot.ipxe"), 'w') as f:
-            f.write(ipxe_script(branch, network))
+            f.write(ipxe_script(branch, network, extra))
 
         print("[+] building iso")
         script = os.path.join(BASEPATH, "scripts", "mkiso.sh")
@@ -71,7 +75,11 @@ def iso_branch_network(branch, network):
 
 @app.route('/usb/<branch>/<network>', methods=['GET'])
 def usb_branch_network(branch, network):
-    print("[+] branch: %s, network: %s" % (branch, network))
+    return usb_branch_network_extra(branch, network, "")
+
+@app.route('/usb/<branch>/<network>/<extra>', methods=['GET'])
+def usb_branch_network_extra(branch, network, extra):
+    print("[+] branch: %s, network: %s, extra: %s" % (branch, network, extra))
 
     response = make_response("Request failed")
 
@@ -81,7 +89,7 @@ def usb_branch_network(branch, network):
 
         print("[+] creating ipxe script")
         with open(os.path.join(tmpdir, "boot.ipxe"), 'w') as f:
-            f.write(ipxe_script(branch, network))
+            f.write(ipxe_script(branch, network, extra))
 
         print("[+] building iso")
         script = os.path.join(BASEPATH, "scripts", "mkusb.sh")
@@ -99,13 +107,7 @@ def usb_branch_network(branch, network):
 
 @app.route('/ipxe/<branch>/<network>', methods=['GET'])
 def ipxe_branch_network(branch, network):
-    print("[+] branch: %s, network: %s" % (branch, network))
-    script = ipxe_script(branch, network)
-
-    response = make_response(script)
-    response.headers["Content-Type"] = "text/plain"
-
-    return response
+    return ipxe_branch_network_extra(branch, network, "")
 
 @app.route('/ipxe/<branch>/<network>/<extra>', methods=['GET'])
 def ipxe_branch_network_extra(branch, network, extra):
