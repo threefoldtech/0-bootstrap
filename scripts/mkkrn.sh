@@ -16,4 +16,4 @@ MKTRUST="letsencrypt-x3-cross.crt,letsencrypt-x3.crt"
 
 make bin/undionly.kpxe EMBED=${root}/boot.ipxe CERT=${MKCERT} TRUST=${MKTRUST}
 
-cp bin/ipxe.krn ${root}/
+cp bin/undionly.kpxe ${root}/
