@@ -128,12 +128,12 @@ def krn_branch_network_extra(branch, network, extra):
         call(["bash", script, tmpdir])
 
         isocontents = ""
-        with open(os.path.join(tmpdir, "undionly.kpxe"), 'rb') as f:
+        with open(os.path.join(tmpdir, "ipxe.lkrn"), 'rb') as f:
             isocontents = f.read()
 
         response = make_response(isocontents)
         response.headers["Content-Type"] = "application/octet-stream"
-        response.headers['Content-Disposition'] = "inline; filename=ipxe-g8os-%s.img" % branch
+        response.headers['Content-Disposition'] = "inline; filename=ipxe-g8os-%s.lkrn" % branch
 
     return response
 

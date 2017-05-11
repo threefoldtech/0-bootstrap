@@ -14,6 +14,6 @@ pushd ${root}/src
 MKCERT="letsencrypt-x3-cross.crt,letsencrypt-x3.crt"
 MKTRUST="letsencrypt-x3-cross.crt,letsencrypt-x3.crt"
 
-make bin/undionly.kpxe EMBED=${root}/boot.ipxe CERT=${MKCERT} TRUST=${MKTRUST}
+make bin/ipxe.lkrn EMBED=${root}/boot.ipxe CERT=${MKCERT} TRUST=${MKTRUST}
 
-cp bin/undionly.kpxe ${root}/
+cp bin/ipxe.lkrn ${root}/
