@@ -105,6 +105,38 @@ def usb_branch_network_extra(branch, network, extra):
 
     return response
 
+@app.route('/krn/<branch>/<network>', methods=['GET'])
+def krn_branch_network(branch, network):
+    return krn_branch_network_extra(branch, network, "")
+
+@app.route('/krn/<branch>/<network>/<extra>', methods=['GET'])
+def krn_branch_network_extra(branch, network, extra):
+    print("[+] branch: %s, network: %s, extra: %s" % (branch, network, extra))
+
+    response = make_response("Request failed")
+
+    print("[+] copying template")
+    with tempfile.TemporaryDirectory() as tmpdir:
+        shutil.copytree(config['IPXE_TEMPLATE'], os.path.join(tmpdir, "src"), True)
+
+        print("[+] creating ipxe script")
+        with open(os.path.join(tmpdir, "boot.ipxe"), 'w') as f:
+            f.write(ipxe_script(branch, network, extra))
+
+        print("[+] building iso")
+        script = os.path.join(BASEPATH, "scripts", "mkkrn.sh")
+        call(["bash", script, tmpdir])
+
+        isocontents = ""
+        with open(os.path.join(tmpdir, "ipxe.krn"), 'rb') as f:
+            isocontents = f.read()
+
+        response = make_response(isocontents)
+        response.headers["Content-Type"] = "application/octet-stream"
+        response.headers['Content-Disposition'] = "inline; filename=ipxe-g8os-%s.img" % branch
+
+    return response
+
 @app.route('/ipxe/<branch>/<network>', methods=['GET'])
 def ipxe_branch_network(branch, network):
     return ipxe_branch_network_extra(branch, network, "")
