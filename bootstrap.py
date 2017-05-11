@@ -128,7 +128,7 @@ def krn_branch_network_extra(branch, network, extra):
         call(["bash", script, tmpdir])
 
         isocontents = ""
-        with open(os.path.join(tmpdir, "ipxe.krn"), 'rb') as f:
+        with open(os.path.join(tmpdir, "undionly.kpxe"), 'rb') as f:
             isocontents = f.read()
 
         response = make_response(isocontents)
