@@ -21,16 +21,23 @@ BASEPATH = os.path.join(thispath)
 app = Flask(__name__, static_url_path='/kernel')
 app.url_map.strict_slashes = False
 
+
+
 #
 # Helpers
 #
 def ipxe_script(branch, network, extra=""):
-    kernel = os.path.join(config['KERNEL_PATH'], 'g8os-%s.efi' % branch)
+    source = 'g8os-%s.efi' % branch
+    kernel = os.path.join(config['KERNEL_PATH'], source)
 
     if not os.path.exists(kernel):
-        abort(404)
+        source = '%s.efi' % branch
+        kernel = os.path.join(config['KERNEL_PATH'], source)
 
-    kernel = "%s/kernel/g8os-%s.efi" % (config['BASE_HOST'], branch)
+        if not os.path.exists(kernel):
+            abort(404)
+
+    kernel = "%s/kernel/%s" % (config['BASE_HOST'], source)
 
     script  = "#!ipxe\n"
     script += "dhcp\n"
@@ -69,7 +76,7 @@ def iso_branch_network_extra(branch, network, extra):
 
         response = make_response(isocontents)
         response.headers["Content-Type"] = "application/octet-stream"
-        response.headers['Content-Disposition'] = "inline; filename=ipxe-g8os-%s.iso" % branch
+        response.headers['Content-Disposition'] = "inline; filename=ipxe-%s.iso" % branch
 
     return response
 
@@ -101,7 +108,7 @@ def usb_branch_network_extra(branch, network, extra):
 
         response = make_response(isocontents)
         response.headers["Content-Type"] = "application/octet-stream"
-        response.headers['Content-Disposition'] = "inline; filename=ipxe-g8os-%s.img" % branch
+        response.headers['Content-Disposition'] = "inline; filename=ipxe-%s.img" % branch
 
     return response
 
@@ -133,7 +140,7 @@ def krn_branch_network_extra(branch, network, extra):
 
         response = make_response(isocontents)
         response.headers["Content-Type"] = "application/octet-stream"
-        response.headers['Content-Disposition'] = "inline; filename=ipxe-g8os-%s.lkrn" % branch
+        response.headers['Content-Disposition'] = "inline; filename=ipxe-%s.lkrn" % branch
 
     return response
 
