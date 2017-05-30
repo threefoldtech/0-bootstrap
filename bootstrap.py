@@ -45,7 +45,7 @@ def ipxe_script(branch, network, extra=""):
     if network != "":
         script += "chain %s zerotier=%s %s\n" % (kernel, network, extra)
 
-    else
+    else:
         script += "chain %s\n" % kernel
 
     return script
