@@ -41,13 +41,22 @@ def ipxe_script(branch, network, extra=""):
 
     script  = "#!ipxe\n"
     script += "dhcp\n"
-    script += "chain %s zerotier=%s %s\n" % (kernel, network, extra)
+
+    if network != "":
+        script += "chain %s zerotier=%s %s\n" % (kernel, network, extra)
+
+    else
+        script += "chain %s\n" % kernel
 
     return script
 
 #
 # Routing
 #
+@app.route('/iso/<branch>', methods=['GET'])
+def iso_branch(branch):
+    return iso_branch_network_extra(branch, "", "")
+
 @app.route('/iso/<branch>/<network>', methods=['GET'])
 def iso_branch_network(branch, network):
     return iso_branch_network_extra(branch, network, "")
@@ -79,6 +88,10 @@ def iso_branch_network_extra(branch, network, extra):
         response.headers['Content-Disposition'] = "inline; filename=ipxe-%s.iso" % branch
 
     return response
+
+@app.route('/usb/<branch>', methods=['GET'])
+def usb_branch(branch):
+    return usb_branch_network_extra(branch, "", "")
 
 @app.route('/usb/<branch>/<network>', methods=['GET'])
 def usb_branch_network(branch, network):
@@ -112,6 +125,10 @@ def usb_branch_network_extra(branch, network, extra):
 
     return response
 
+@app.route('/krn/<branch>', methods=['GET'])
+def krn_branch(branch):
+    return krn_branch_network_extra(branch, "", "")
+
 @app.route('/krn/<branch>/<network>', methods=['GET'])
 def krn_branch_network(branch, network):
     return krn_branch_network_extra(branch, network, "")
@@ -143,6 +160,10 @@ def krn_branch_network_extra(branch, network, extra):
         response.headers['Content-Disposition'] = "inline; filename=ipxe-%s.lkrn" % branch
 
     return response
+
+@app.route('/ipxe/<branch>', methods=['GET'])
+def ipxe_branch(branch):
+    return ipxe_branch_network_extra(branch, "", "")
 
 @app.route('/ipxe/<branch>/<network>', methods=['GET'])
 def ipxe_branch_network(branch, network):
