@@ -27,7 +27,7 @@ app.url_map.strict_slashes = False
 # Helpers
 #
 def ipxe_script(branch, network, extra=""):
-    source = 'g8os-%s.efi' % branch
+    source = 'zero-os-%s.efi' % branch
     kernel = os.path.join(config['KERNEL_PATH'], source)
 
     if not os.path.exists(kernel):
