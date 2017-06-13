@@ -161,6 +161,42 @@ def krn_branch_network_extra(branch, network, extra):
 
     return response
 
+@app.route('/uefi/<branch>', methods=['GET'])
+def uefi_branch(branch):
+    return uefi_branch_network_extra(branch, "", "")
+
+@app.route('/uefi/<branch>/<network>', methods=['GET'])
+def uefi_branch_network(branch, network):
+    return uefi_branch_network_extra(branch, network, "")
+
+@app.route('/uefi/<branch>/<network>/<extra>', methods=['GET'])
+def uefi_branch_network_extra(branch, network, extra):
+    print("[+] branch: %s, network: %s, extra: %s" % (branch, network, extra))
+
+    response = make_response("Request failed")
+
+    print("[+] copying template")
+    with tempfile.TemporaryDirectory() as tmpdir:
+        shutil.copytree(config['IPXE_TEMPLATE'], os.path.join(tmpdir, "src"), True)
+
+        print("[+] creating ipxe script")
+        with open(os.path.join(tmpdir, "boot.ipxe"), 'w') as f:
+            f.write(ipxe_script(branch, network, extra))
+
+        print("[+] building iso")
+        script = os.path.join(BASEPATH, "scripts", "mkuefi.sh")
+        call(["bash", script, tmpdir])
+
+        isocontents = ""
+        with open(os.path.join(tmpdir, "ipxe.efi"), 'rb') as f:
+            isocontents = f.read()
+
+        response = make_response(isocontents)
+        response.headers["Content-Type"] = "application/octet-stream"
+        response.headers['Content-Disposition'] = "inline; filename=ipxe-%s.efi" % branch
+
+    return response
+
 @app.route('/ipxe/<branch>', methods=['GET'])
 def ipxe_branch(branch):
     return ipxe_branch_network_extra(branch, "", "")
