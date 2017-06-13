@@ -4,6 +4,7 @@
 config = {
     'BASE_HOST': "http://somewhere.tld",
     'IPXE_TEMPLATE': "/opt/ipxe-template",
+    'IPXE_TEMPLATE_UEFI': "/opt/ipxe-template-uefi",
 
     'KERNEL_PATH': '/',
 
