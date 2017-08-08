@@ -83,12 +83,12 @@ Here for linux:
 ```bash
 # get the UEFI image to boot (note: that is only a bootloader and an ipxe script, so very small)
 
-FILE=`mktemp`
-wget -O ${file} https://bootstrap.gig.tech/uefi/zero-os-master/93afae53ef5ae4f0/extra%20argument%20organization=yellowitglobe%20debug=true
-USB=/dev/sdf
+FILE=$(mktemp)
+wget -O ${FILE} https://bootstrap.gig.tech/uefi/zero-os-master/93afae53ef5ae4f0/extra%20argument%20organization=yellowitglobe%20debug=true
+USB="/dev/sdf"
 parted -s $USB "mklabel msdos mkpart primary fat32 1 100%"
 mkfs.vfat -F32 ${USB}1
-DIR=`mktemp -d`
+DIR=$(mktemp -d)
 mount ${USB}1 $DIR
 mkdir -p ${DIR}/EFI/BOOT
 cp ${FILE} ${DIR}/EFI/BOOT/BOOTX64.EFI
