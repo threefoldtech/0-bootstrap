@@ -34,6 +34,7 @@ Next to the most recent kernel builds, the Zero-OS bootstrap service also provid
 - [ISO file](#iso)
 - [USB image](#usb)
 - [iPXE script](#ipxe)
+- [UEFI BOOT](#uefi)
 
 <a id="iso"></a>
 ### ISO
@@ -66,3 +67,31 @@ chain https://bootstrap.gig.tech/kernel/zero-os-master.efi zerotier=hello extra 
 ```
 
 This is useful when you want to boot a remote machine using an iPXE script, i.e. `Packet.net` or `OVH` servers.
+
+<a id="uefi"></a>
+### UEFI boot from usb
+
+If you have an UEFI-capable machine that can boot from an USB stick, you can request for an UEFI boot iPXE that has
+an iPXE script embedded.
+
+For instance `https://bootstrap.gig.tech/uefi/zero-os-master/93afae53ef5ae4f0/extra%20argument%20organization=yellowitglobe%20debug=true`:
+
+The provided image is a few K that can be added into the UEFI partition of the node, or installed on an usb stick:
+
+Here for linux:
+
+```bash
+# get the UEFI image to boot (note: that is only a bootloader and an ipxe script, so very small)
+
+FILE=`mktemp`
+wget -O ${file} https://bootstrap.gig.tech/uefi/zero-os-master/93afae53ef5ae4f0/extra%20argument%20organization=yellowitglobe%20debug=true
+USB=/dev/sdf
+parted -s $USB "mklabel msdos mkpart primary fat32 1 100%"
+mkfs.vfat -F32 ${USB}1
+DIR=`mktemp -d`
+mount ${USB}1 $DIR
+mkdir -p ${DIR}/EFI/BOOT
+cp ${FILE} ${DIR}/EFI/BOOT/BOOTX64.EFI
+umount ${DIR}
+rm ${FILE} ${DIR}
+```
