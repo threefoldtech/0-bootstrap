@@ -16,4 +16,19 @@ MKTRUST="letsencrypt-x3-cross.crt,letsencrypt-x3.crt"
 
 make bin-x86_64-efi/ipxe.efi EMBED=${root}/boot.ipxe CERT=${MKCERT} TRUST=${MKTRUST}
 
-cp bin-x86_64-efi/ipxe.efi ${root}/
+# create a loop device to hold partitions and UEFI data
+dd if=/dev/zero of=${root}/uefimg.img bs=512 count=4k # large ee-nuff ?
+
+parted ${root}/uefimg.img -s "mklabel msdos mkpart primary fat16 0 100%"
+LOOP=`losetup --partscan --find --show ${root}/uefimg.img`
+DIR=`mktemp -d`
+mkfs.vfat ${LOOP}p1
+mount ${LOOP}p1 ${DIR}
+mkdir -p ${DIR}/EFI/BOOT
+cp bin-x86_64-efi/ipxe.efi ${DIR}/EFI/BOOT/BOOTX64.EFI
+umount ${DIR}
+losetup -d ${LOOP}
+
+
+
+# cp bin-x86_64-efi/ipxe.efi ${root}/
