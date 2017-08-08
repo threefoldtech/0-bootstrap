@@ -229,7 +229,7 @@ def uefimg_branch_network_extra(branch, network, extra):
 
         response = make_response(isocontents)
         response.headers["Content-Type"] = "application/octet-stream"
-        response.headers['Content-Disposition'] = "inline; filename=uefi-%s.img" % branch
+        response.headers['Content-Disposition'] = "inline; filename=uefiusb-%s.img" % branch
 
     return response
 

@@ -9,9 +9,10 @@ This web service provides:
 - `/iso/[branch]/[zerotier]`: generate a bootable ISO to boot `g8os-[branch].efi` kernel with `[zerotier]` network id
 - `/usb/[branch]/[zerotier]`: generate a bootable USB image to boot `g8os-[branch].efi` kernel with `[zerotier]` network id
 - `/uefi/[branch]/[zerotier]`: generate an UEFI bootloader with a ipxe script to boot `g8os-[branch].efi` kernel with `[zerotier]` network id
+- `/uefimg/[branch]/[zerotier]`: same as above, but an image to be dd'd to an usb stick for UEFI boxes
 - `/kernel/[name]`: provide a kernel stored
 
-The `/ipxe`, `/iso` and `/usb` endpoints provide one more optional options to pass extra kernel argument, eg: `/ipxe/[branch]/[zerotier]/rw quiet`
+The `/ipxe`, `/iso`, `/usb` and `/uefi`  endpoints provide one more optional options to pass extra kernel argument, eg: `/ipxe/[branch]/[zerotier]/rw quiet`
 
 ## Installation
 
