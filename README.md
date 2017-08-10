@@ -21,7 +21,7 @@ To speedup ISO and USB images creation, the script will use a iPXE-template dire
 To pre-compile code, you can run the `setup/template.sh` script.
 This will prepare the template and put it on `/opt/ipxe-template`.
 
-In oder to compile correctly the sources, you'll need (ubuntu): `build-essential syslinux liblzma-dev libz-dev genisoimage isolinux wget dosfstools`
+In oder to compile correctly the sources, you'll need (ubuntu): `build-essential syslinux liblzma-dev libz-dev genisoimage isolinux wget dosfstools udev`
 
 ## Run
 
