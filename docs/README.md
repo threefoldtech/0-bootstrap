@@ -93,5 +93,6 @@ mount ${USB}1 $DIR
 mkdir -p ${DIR}/EFI/BOOT
 cp ${FILE} ${DIR}/EFI/BOOT/BOOTX64.EFI
 umount ${DIR}
-rm -f ${FILE} ${DIR}
+rm -f ${FILE} 
+rmdir ${DIR}
 ```
