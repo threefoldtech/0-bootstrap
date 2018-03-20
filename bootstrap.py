@@ -37,7 +37,11 @@ def ipxe_script(branch, network, extra=""):
         if not os.path.exists(kernel):
             abort(404)
 
-    kernel = "%s/kernel/%s" % (config['BASE_HOST'], source)
+    protocol = 'https'
+    if 'unsecure' in request.host:
+        protocol = 'http'
+
+    kernel = "%s://%s/kernel/%s" % (protocol, request.host, source)
 
     script  = "#!ipxe\n"
     script += "dhcp\n"
