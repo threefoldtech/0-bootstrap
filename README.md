@@ -1,18 +1,48 @@
-# Zero-OS Bootstrap Service
+# Zero-OS Bootstrap Webservice
 
 This web service will provides dynamic construction of iPXE scripts for booting and bootstrapping Zero-OS kernel images.
 
 ## Endpoints
 
-This web service provides:
-- `/ipxe/[branch]/[zerotier]`: generate an iPXE script to boot `g8os-[branch].efi` kernel with `[zerotier]` network id
-- `/iso/[branch]/[zerotier]`: generate a bootable ISO to boot `g8os-[branch].efi` kernel with `[zerotier]` network id
-- `/usb/[branch]/[zerotier]`: generate a bootable USB image to boot `g8os-[branch].efi` kernel with `[zerotier]` network id
-- `/uefi/[branch]/[zerotier]`: generate an UEFI bootloader with a ipxe script to boot `g8os-[branch].efi` kernel with `[zerotier]` network id
-- `/uefimg/[branch]/[zerotier]`: same as above, but an image to be dd'd to an usb stick for UEFI boxes
-- `/kernel/[name]`: provide a kernel stored
+The most simple endpoint is the plain text version:
+- `/ipxe/`: generate an iPXE plain text script to boot
 
-The `/ipxe`, `/iso`, `/usb` and `/uefi`  endpoints provide one more optional options to pass extra kernel argument, eg: `/ipxe/[branch]/[zerotier]/rw quiet`
+You can generate a bootable image with a bundle boot-script via:
+- `/iso/`: generate a bootable ISO file
+- `/usb/`: generate a bootable USB image file
+- `/uefi/`: generate an UEFI bootloader file
+- `/uefimg/`: same as above, but an image to be dd'd to an usb stick for UEFI boxes
+- `/krn/`: generate directly-bootable kernel
+
+Static target:
+- `/krn-generic`: build a generic ipxe kernel, with our SSL certificates authorized
+- `/kernel/[name]`: provide the kernel (static file)
+
+## Arguments
+All endpoints (except `/krn-generic/` and `/kernel/` which are static) accepts more optional arguments:
+```
+...endpoint/[branch]/[zerotier-network]/[extra-arguments]
+```
+
+Any argument are optional, but are ordered and dependants (eg: you cannot provide extra argument without providing zerotier network)
+
+Theses are valid endpoint example:
+- `/ipxe/master`
+- `/ipxe/master/8056c2e21c000001`
+- `/ipxe/master/8056c2e21c000001/console=ttyS0`
+- `/ipxe/master/null/console=ttyS1` (special case to not set zerotier network)
+
+### Branches
+You can specify any branches available, the list is displayed on the default webpage of the webservice
+
+### ZeroTier Network ID
+The Network ID can be either public or private. If you don't provide ID, Zero-OS will listening for incoming connection on all interface.
+
+The special ID `null` or `0` can be set to still provide extra argument without having Network ID
+
+### Extra Argument
+Everything set on the last argument will be forwarded as-it to the kernel argument. You can set spaces, etc.
+
 
 ## Installation
 
