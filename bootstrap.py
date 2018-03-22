@@ -131,7 +131,7 @@ def usb_branch_network_extra(branch, network, extra):
     return response
 
 @app.route('/krn-generic', methods=['GET'])
-def krn_generic(branch):
+def krn_generic():
     print("[+] generic ipxe kernel")
 
     response = make_response("Request failed")
