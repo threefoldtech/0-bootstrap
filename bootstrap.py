@@ -45,12 +45,13 @@ def ipxe_script(branch, network, extra=""):
 
     script  = "#!ipxe\n"
     script += "dhcp\n"
+    script += "chain %s" % kernel
 
-    if network != "":
-        script += "chain %s zerotier=%s %s\n" % (kernel, network, extra)
+    if network and network != "null" and network != "0":
+        script += " zerotier=%s" % network
 
-    else:
-        script += "chain %s\n" % kernel
+    if extra:
+        script += " " + extra
 
     return script
 
