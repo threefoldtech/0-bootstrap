@@ -130,6 +130,32 @@ def usb_branch_network_extra(branch, network, extra):
 
     return response
 
+@app.route('/krn-generic', methods=['GET'])
+def krn_generic(branch):
+    print("[+] generic ipxe kernel")
+
+    response = make_response("Request failed")
+
+    print("[+] copying template")
+    with tempfile.TemporaryDirectory() as tmpdir:
+        shutil.copytree(config['IPXE_TEMPLATE'], os.path.join(tmpdir, "src"), True)
+
+        print("[+] building kernel")
+        script = os.path.join(BASEPATH, "scripts", "mkkrn-generic.sh")
+        call(["bash", script, tmpdir])
+
+        isocontents = ""
+        with open(os.path.join(tmpdir, "ipxe.lkrn"), 'rb') as f:
+            isocontents = f.read()
+
+        response = make_response(isocontents)
+        response.headers["Content-Type"] = "application/octet-stream"
+        response.headers['Content-Disposition'] = "inline; filename=ipxe-zero-os-generic.lkrn"
+
+    return response
+
+
+
 @app.route('/krn/<branch>', methods=['GET'])
 def krn_branch(branch):
     return krn_branch_network_extra(branch, "", "")
