@@ -154,6 +154,30 @@ def krn_generic():
 
     return response
 
+@app.route('/uefi-generic', methods=['GET'])
+def uefi_generic():
+    print("[+] generic uefi ipxe")
+
+    response = make_response("Request failed")
+
+    print("[+] copying template")
+    with tempfile.TemporaryDirectory() as tmpdir:
+        shutil.copytree(config['IPXE_TEMPLATE_UEFI'], os.path.join(tmpdir, "src"), True)
+
+        print("[+] building kernel")
+        script = os.path.join(BASEPATH, "scripts", "mkuefi-generic.sh")
+        call(["bash", script, tmpdir])
+
+        isocontents = ""
+        with open(os.path.join(tmpdir, "ipxe.efi"), 'rb') as f:
+            isocontents = f.read()
+
+        response = make_response(isocontents)
+        response.headers["Content-Type"] = "application/octet-stream"
+        response.headers['Content-Disposition'] = "inline; filename=ipxe-zero-os-generic.lkrn"
+
+    return response
+
 
 
 @app.route('/krn/<branch>', methods=['GET'])
