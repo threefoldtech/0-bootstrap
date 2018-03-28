@@ -44,7 +44,19 @@ def ipxe_script(branch, network, extra=""):
     kernel = "%s://%s/kernel/%s" % (protocol, request.host, source)
 
     script  = "#!ipxe\n"
-    script += "dhcp\n"
+    script += "echo ================================\n"
+    script += "echo == Zero-OS Kernel Boot Loader ==\n"
+    script += "echo ================================\n"
+    script += "echo \n\n"
+    script += "echo Initializing network\n"
+    script += "dhcp\n\n"
+    script += "echo Synchronizing time\n"
+    script += "ntp pool.ntp.org\n\n"
+    script += "echo \n"
+    script += "show ip\n"
+    script += "route\n"
+    script += "echo \n\n"
+    script += "echo Downloading Zero-OS image...\n"
     script += "chain %s" % kernel
 
     if network and network != "null" and network != "0":
@@ -53,6 +65,8 @@ def ipxe_script(branch, network, extra=""):
     if extra:
         script += " " + extra
 
+    script += "\nsleep 5"
+    
     return script
 
 #
