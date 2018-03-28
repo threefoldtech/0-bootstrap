@@ -20,7 +20,7 @@ for target in "ipxe-legacy" "ipxe-uefi"; do
 
     # Enable HTTPS, NTP and REBOOT
     sed -i "s|undef\tDOWNLOAD_PROTO_HTTPS|define\tDOWNLOAD_PROTO_HTTPS|" config/general.h
-    sed -i 's|//#define NTP_CMD|#define NTP_CMD/' config/general.h
+    sed -i 's|//#define NTP_CMD|#define NTP_CMD|' config/general.h
     sed -i 's|//#define REBOOT_CMD|#define REBOOT_CMD|' config/general.h
 
     wget -4 https://letsencrypt.org/certs/lets-encrypt-x3-cross-signed.pem.txt -O letsencrypt-x3-cross.crt
