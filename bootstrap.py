@@ -174,11 +174,9 @@ def uefi_generic():
 
         response = make_response(isocontents)
         response.headers["Content-Type"] = "application/octet-stream"
-        response.headers['Content-Disposition'] = "inline; filename=ipxe-zero-os-generic.lkrn"
+        response.headers['Content-Disposition'] = "inline; filename=ipxe-zero-os-generic.efi"
 
     return response
-
-
 
 @app.route('/krn/<branch>', methods=['GET'])
 def krn_branch(branch):
