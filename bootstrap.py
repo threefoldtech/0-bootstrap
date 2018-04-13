@@ -92,7 +92,7 @@ def iso_branch_network_extra(branch, network, extra):
         src = os.path.join(tmpdir, "src")
 
         print("[+] copying template: %s > %s" % (config['IPXE_TEMPLATE'], src))
-        call(["cp", "-r", config['IPXE_TEMPLATE'], src])
+        call(["cp", "-ar", config['IPXE_TEMPLATE'], src])
 
         print("[+] creating ipxe script")
         with open(os.path.join(tmpdir, "boot.ipxe"), 'w') as f:
@@ -130,7 +130,7 @@ def usb_branch_network_extra(branch, network, extra):
         src = os.path.join(tmpdir, "src")
 
         print("[+] copying template: %s > %s" % (config['IPXE_TEMPLATE'], src))
-        call(["cp", "-r", config['IPXE_TEMPLATE'], src])
+        call(["cp", "-ar", config['IPXE_TEMPLATE'], src])
 
         print("[+] creating ipxe script")
         with open(os.path.join(tmpdir, "boot.ipxe"), 'w') as f:
@@ -160,7 +160,7 @@ def krn_generic():
         src = os.path.join(tmpdir, "src")
 
         print("[+] copying template: %s > %s" % (config['IPXE_TEMPLATE'], src))
-        call(["cp", "-r", config['IPXE_TEMPLATE'], src])
+        call(["cp", "-ar", config['IPXE_TEMPLATE'], src])
 
         print("[+] building kernel")
         script = os.path.join(BASEPATH, "scripts", "mkkrn-generic.sh")
@@ -186,7 +186,7 @@ def uefi_generic():
         src = os.path.join(tmpdir, "src")
 
         print("[+] copying template: %s > %s" % (config['IPXE_TEMPLATE_UEFI'], src))
-        call(["cp", "-r", config['IPXE_TEMPLATE_UEFI'], src])
+        call(["cp", "-ar", config['IPXE_TEMPLATE_UEFI'], src])
 
         print("[+] building kernel")
         script = os.path.join(BASEPATH, "scripts", "mkuefi-generic.sh")
@@ -220,7 +220,7 @@ def krn_branch_network_extra(branch, network, extra):
         src = os.path.join(tmpdir, "src")
 
         print("[+] copying template: %s > %s" % (config['IPXE_TEMPLATE'], src))
-        call(["cp", "-r", config['IPXE_TEMPLATE'], src])
+        call(["cp", "-ar", config['IPXE_TEMPLATE'], src])
 
         print("[+] creating ipxe script")
         with open(os.path.join(tmpdir, "boot.ipxe"), 'w') as f:
@@ -258,7 +258,7 @@ def uefi_branch_network_extra(branch, network, extra):
         src = os.path.join(tmpdir, "src")
 
         print("[+] copying template: %s > %s" % (config['IPXE_TEMPLATE_UEFI'], src))
-        call(["cp", "-r", config['IPXE_TEMPLATE_UEFI'], src])
+        call(["cp", "-ar", config['IPXE_TEMPLATE_UEFI'], src])
 
         print("[+] creating ipxe script")
         with open(os.path.join(tmpdir, "boot.ipxe"), 'w') as f:
@@ -296,7 +296,7 @@ def uefimg_branch_network_extra(branch, network, extra):
         src = os.path.join(tmpdir, "src")
 
         print("[+] copying template: %s > %s" % (config['IPXE_TEMPLATE_UEFI'], src))
-        call(["cp", "-r", config['IPXE_TEMPLATE_UEFI'], src])
+        call(["cp", "-ar", config['IPXE_TEMPLATE_UEFI'], src])
 
         print("[+] creating ipxe script")
         with open(os.path.join(tmpdir, "boot.ipxe"), 'w') as f:
