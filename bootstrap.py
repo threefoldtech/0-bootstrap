@@ -88,9 +88,11 @@ def iso_branch_network_extra(branch, network, extra):
 
     response = make_response("Request failed")
 
-    print("[+] copying template")
     with tempfile.TemporaryDirectory() as tmpdir:
-        shutil.copytree(config['IPXE_TEMPLATE'], os.path.join(tmpdir, "src"), True)
+        src = os.path.join(tmpdir, "src")
+
+        print("[+] copying template: %s > %s" % (config['IPXE_TEMPLATE'], src))
+        call(["cp", "-r", config['IPXE_TEMPLATE'], src])
 
         print("[+] creating ipxe script")
         with open(os.path.join(tmpdir, "boot.ipxe"), 'w') as f:
@@ -124,9 +126,11 @@ def usb_branch_network_extra(branch, network, extra):
 
     response = make_response("Request failed")
 
-    print("[+] copying template")
     with tempfile.TemporaryDirectory() as tmpdir:
-        shutil.copytree(config['IPXE_TEMPLATE'], os.path.join(tmpdir, "src"), True)
+        src = os.path.join(tmpdir, "src")
+
+        print("[+] copying template: %s > %s" % (config['IPXE_TEMPLATE'], src))
+        call(["cp", "-r", config['IPXE_TEMPLATE'], src])
 
         print("[+] creating ipxe script")
         with open(os.path.join(tmpdir, "boot.ipxe"), 'w') as f:
@@ -152,9 +156,11 @@ def krn_generic():
 
     response = make_response("Request failed")
 
-    print("[+] copying template")
     with tempfile.TemporaryDirectory() as tmpdir:
-        shutil.copytree(config['IPXE_TEMPLATE'], os.path.join(tmpdir, "src"), True)
+        src = os.path.join(tmpdir, "src")
+
+        print("[+] copying template: %s > %s" % (config['IPXE_TEMPLATE'], src))
+        call(["cp", "-r", config['IPXE_TEMPLATE'], src])
 
         print("[+] building kernel")
         script = os.path.join(BASEPATH, "scripts", "mkkrn-generic.sh")
@@ -176,9 +182,11 @@ def uefi_generic():
 
     response = make_response("Request failed")
 
-    print("[+] copying template")
     with tempfile.TemporaryDirectory() as tmpdir:
-        shutil.copytree(config['IPXE_TEMPLATE_UEFI'], os.path.join(tmpdir, "src"), True)
+        src = os.path.join(tmpdir, "src")
+
+        print("[+] copying template: %s > %s" % (config['IPXE_TEMPLATE_UEFI'], src))
+        call(["cp", "-r", config['IPXE_TEMPLATE_UEFI'], src])
 
         print("[+] building kernel")
         script = os.path.join(BASEPATH, "scripts", "mkuefi-generic.sh")
@@ -208,9 +216,11 @@ def krn_branch_network_extra(branch, network, extra):
 
     response = make_response("Request failed")
 
-    print("[+] copying template")
     with tempfile.TemporaryDirectory() as tmpdir:
-        shutil.copytree(config['IPXE_TEMPLATE'], os.path.join(tmpdir, "src"), True)
+        src = os.path.join(tmpdir, "src")
+
+        print("[+] copying template: %s > %s" % (config['IPXE_TEMPLATE'], src))
+        call(["cp", "-r", config['IPXE_TEMPLATE'], src])
 
         print("[+] creating ipxe script")
         with open(os.path.join(tmpdir, "boot.ipxe"), 'w') as f:
@@ -244,12 +254,11 @@ def uefi_branch_network_extra(branch, network, extra):
 
     response = make_response("Request failed")
 
-    print("[+] copying template")
     with tempfile.TemporaryDirectory() as tmpdir:
         src = os.path.join(tmpdir, "src")
-        os.mkdir(src)
+
+        print("[+] copying template: %s > %s" % (config['IPXE_TEMPLATE_UEFI'], src))
         call(["cp", "-r", config['IPXE_TEMPLATE_UEFI'], src])
-        # shutil.copytree(config['IPXE_TEMPLATE_UEFI'], os.path.join(tmpdir, "src"), True)
 
         print("[+] creating ipxe script")
         with open(os.path.join(tmpdir, "boot.ipxe"), 'w') as f:
@@ -283,10 +292,10 @@ def uefimg_branch_network_extra(branch, network, extra):
 
     response = make_response("Request failed")
 
-    print("[+] copying template")
     with tempfile.TemporaryDirectory() as tmpdir:
         src = os.path.join(tmpdir, "src")
-        os.mkdir(src)
+
+        print("[+] copying template: %s > %s" % (config['IPXE_TEMPLATE_UEFI'], src))
         call(["cp", "-r", config['IPXE_TEMPLATE_UEFI'], src])
 
         print("[+] creating ipxe script")
