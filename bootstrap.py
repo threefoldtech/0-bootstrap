@@ -7,7 +7,7 @@ import datetime
 import operator
 from subprocess import call
 from stat import *
-from flask import Flask, request, redirect, url_for, render_template, abort, Markup, make_response
+from flask import Flask, request, redirect, url_for, render_template, abort, Markup, make_response, send_from_directory
 from werkzeug.utils import secure_filename
 from werkzeug.contrib.fixers import ProxyFix
 from config import config
@@ -18,7 +18,7 @@ from config import config
 thispath = os.path.dirname(os.path.realpath(__file__))
 BASEPATH = os.path.join(thispath)
 
-app = Flask(__name__, static_url_path='/kernel')
+app = Flask(__name__, static_url_path='/static')
 app.url_map.strict_slashes = False
 
 
@@ -28,11 +28,11 @@ app.url_map.strict_slashes = False
 #
 def ipxe_script(branch, network, extra=""):
     source = 'zero-os-%s.efi' % branch
-    kernel = os.path.join(config['KERNEL_PATH'], source)
+    kernel = os.path.join(config['kernel-path'], source)
 
     if not os.path.exists(kernel):
         source = '%s.efi' % branch
-        kernel = os.path.join(config['KERNEL_PATH'], source)
+        kernel = os.path.join(config['kernel-path'], source)
 
         if not os.path.exists(kernel):
             abort(404)
@@ -74,6 +74,14 @@ def ipxe_script(branch, network, extra=""):
 #
 # Routing
 #
+@app.route('/kernel/<path:filename>', methods=['GET'])
+def download(filename):
+    print("[+] downloading: %s" % filename)
+    return send_from_directory(directory=config['kernel-path'], filename=filename)
+
+#
+# Image Generator
+#
 @app.route('/iso/<branch>', methods=['GET'])
 def iso_branch(branch):
     return iso_branch_network_extra(branch, "", "")
@@ -91,8 +99,8 @@ def iso_branch_network_extra(branch, network, extra):
     with tempfile.TemporaryDirectory() as tmpdir:
         src = os.path.join(tmpdir, "src")
 
-        print("[+] copying template: %s > %s" % (config['IPXE_TEMPLATE'], src))
-        call(["cp", "-ar", config['IPXE_TEMPLATE'], src])
+        print("[+] copying template: %s > %s" % (config['ipxe-template'], src))
+        call(["cp", "-ar", config['ipxe-template'], src])
 
         print("[+] creating ipxe script")
         with open(os.path.join(tmpdir, "boot.ipxe"), 'w') as f:
@@ -129,8 +137,8 @@ def usb_branch_network_extra(branch, network, extra):
     with tempfile.TemporaryDirectory() as tmpdir:
         src = os.path.join(tmpdir, "src")
 
-        print("[+] copying template: %s > %s" % (config['IPXE_TEMPLATE'], src))
-        call(["cp", "-ar", config['IPXE_TEMPLATE'], src])
+        print("[+] copying template: %s > %s" % (config['ipxe-template'], src))
+        call(["cp", "-ar", config['ipxe-template'], src])
 
         print("[+] creating ipxe script")
         with open(os.path.join(tmpdir, "boot.ipxe"), 'w') as f:
@@ -159,8 +167,8 @@ def krn_generic():
     with tempfile.TemporaryDirectory() as tmpdir:
         src = os.path.join(tmpdir, "src")
 
-        print("[+] copying template: %s > %s" % (config['IPXE_TEMPLATE'], src))
-        call(["cp", "-ar", config['IPXE_TEMPLATE'], src])
+        print("[+] copying template: %s > %s" % (config['ipxe-template'], src))
+        call(["cp", "-ar", config['ipxe-template'], src])
 
         print("[+] building kernel")
         script = os.path.join(BASEPATH, "scripts", "mkkrn-generic.sh")
@@ -185,8 +193,8 @@ def uefi_generic():
     with tempfile.TemporaryDirectory() as tmpdir:
         src = os.path.join(tmpdir, "src")
 
-        print("[+] copying template: %s > %s" % (config['IPXE_TEMPLATE_UEFI'], src))
-        call(["cp", "-ar", config['IPXE_TEMPLATE_UEFI'], src])
+        print("[+] copying template: %s > %s" % (config['ipxe-template-uefi'], src))
+        call(["cp", "-ar", config['ipxe-template-uefi'], src])
 
         print("[+] building kernel")
         script = os.path.join(BASEPATH, "scripts", "mkuefi-generic.sh")
@@ -219,8 +227,8 @@ def krn_branch_network_extra(branch, network, extra):
     with tempfile.TemporaryDirectory() as tmpdir:
         src = os.path.join(tmpdir, "src")
 
-        print("[+] copying template: %s > %s" % (config['IPXE_TEMPLATE'], src))
-        call(["cp", "-ar", config['IPXE_TEMPLATE'], src])
+        print("[+] copying template: %s > %s" % (config['ipxe-template'], src))
+        call(["cp", "-ar", config['ipxe-template'], src])
 
         print("[+] creating ipxe script")
         with open(os.path.join(tmpdir, "boot.ipxe"), 'w') as f:
@@ -257,8 +265,8 @@ def uefi_branch_network_extra(branch, network, extra):
     with tempfile.TemporaryDirectory() as tmpdir:
         src = os.path.join(tmpdir, "src")
 
-        print("[+] copying template: %s > %s" % (config['IPXE_TEMPLATE_UEFI'], src))
-        call(["cp", "-ar", config['IPXE_TEMPLATE_UEFI'], src])
+        print("[+] copying template: %s > %s" % (config['ipxe-template-uefi'], src))
+        call(["cp", "-ar", config['ipxe-template-uefi'], src])
 
         print("[+] creating ipxe script")
         with open(os.path.join(tmpdir, "boot.ipxe"), 'w') as f:
@@ -295,8 +303,8 @@ def uefimg_branch_network_extra(branch, network, extra):
     with tempfile.TemporaryDirectory() as tmpdir:
         src = os.path.join(tmpdir, "src")
 
-        print("[+] copying template: %s > %s" % (config['IPXE_TEMPLATE_UEFI'], src))
-        call(["cp", "-ar", config['IPXE_TEMPLATE_UEFI'], src])
+        print("[+] copying template: %s > %s" % (config['ipxe-template-uefi'], src))
+        call(["cp", "-ar", config['ipxe-template-uefi'], src])
 
         print("[+] creating ipxe script")
         with open(os.path.join(tmpdir, "boot.ipxe"), 'w') as f:
@@ -335,9 +343,141 @@ def ipxe_branch_network_extra(branch, network, extra):
 
     return response
 
+#
+# Helpers
+#
+def branches_list():
+    branches = []
+    target = os.listdir(config['kernel-path'])
+    ordered = {}
+
+    for filename in target:
+        endpoint = os.path.join(config['kernel-path'], filename)
+        stat = os.stat(endpoint, follow_symlinks=False)
+
+        if not S_ISLNK(stat.st_mode):
+            continue
+
+        ordered[endpoint] = stat.st_mtime
+
+    starget = sorted(ordered.items(), key=operator.itemgetter(1))
+    starget.reverse()
+
+    for endpoint in starget:
+        fullpath = endpoint[0]
+        updated = datetime.datetime.utcfromtimestamp(endpoint[1]).strftime('%Y-%m-%d, %H:%M:%S (UTC)')
+
+        filename = os.path.basename(fullpath)
+        link = os.readlink(fullpath)
+
+        branch = filename[:-4]
+        if branch.startswith("zero-os"):
+            branch = branch[8:]
+
+        branches.append({
+            'name': filename,
+            'branch': branch,
+            'target': link,
+            'updated': updated,
+        })
+
+    return branches
+
+#
+# Web Frontend Routing
+#
 @app.route('/', methods=['GET'])
+def homepage():
+    content = {
+        'links': [],
+    }
+
+    for popular in config['popular']:
+        filename = "zero-os-%s.efi" % popular
+        endpoint = os.path.join(config['kernel-path'], filename)
+
+        content['links'].append({
+            'name': filename,
+            'branch': popular,
+            'target': os.readlink(endpoint)
+        })
+
+
+    return render_template("home.html", **content)
+
+@app.route('/branches', methods=['GET'])
+def branches():
+    content = {
+        'links': branches_list(),
+    }
+
+    return render_template("branches.html", **content)
+
+@app.route('/images', methods=['GET'])
+def kernels():
+    content = {
+        'files': [],
+    }
+
+    target = os.listdir(config['kernel-path'])
+    ordered = {}
+
+    for filename in target:
+        endpoint = os.path.join(config['kernel-path'], filename)
+        stat = os.stat(endpoint, follow_symlinks=False)
+        updated = datetime.datetime.utcfromtimestamp(stat.st_mtime).strftime('%Y-%m-%d, %H:%M:%S (UTC)')
+
+        if not S_ISREG(stat.st_mode):
+            continue
+
+        ordered[endpoint] = stat.st_mtime
+
+    starget = sorted(ordered.items(), key=operator.itemgetter(1))
+    starget.reverse()
+
+    for endpoint in starget:
+        fullpath = endpoint[0]
+        filename = os.path.basename(fullpath)
+        updated = datetime.datetime.utcfromtimestamp(endpoint[1]).strftime('%Y-%m-%d, %H:%M:%S (UTC)')
+
+        content['files'].append({
+            'name': filename,
+            'release': filename[:-4],
+            'updated': updated,
+        })
+
+    return render_template("kernels.html", **content)
+
+@app.route('/generate', methods=['GET'])
+def generate():
+    sources = []
+
+    for popular in config['popular']:
+        sources.append({'branch': popular})
+
+    sources.append({'branch': '----'})
+    sources += branches_list()
+
+    content = {
+        'basebranch': '',
+        'branches': sources,
+        'baseurl': config['base-host'],
+    }
+
+    return render_template("generate.html", **content)
+
+@app.route('/generate/<base>', methods=['GET'])
+def generate_based(base):
+    content = {
+        'basebranch': base,
+        'baseurl': config['base-host'],
+    }
+    return render_template("generate.html", **content)
+
+
+@app.route('/br', methods=['GET'])
 def kernel_list():
-    target = os.listdir(config['KERNEL_PATH'])
+    target = os.listdir(config['kernel-path'])
     target.sort()
 
     content = {
@@ -350,7 +490,7 @@ def kernel_list():
 
 
     for file in target:
-        endpoint = os.path.join(config['KERNEL_PATH'], file)
+        endpoint = os.path.join(config['kernel-path'], file)
         stats[file] = os.stat(endpoint, follow_symlinks=False)
         ordered[file] = stats[file].st_mtime
 
@@ -360,9 +500,14 @@ def kernel_list():
     for file in starget:
         file = file[0]
         if S_ISLNK(stats[file].st_mode):
+            branch = file[:-4]
+            if branch.startswith("zero-os"):
+                branch = branch[8:]
+
             content['links'].append({
                 'name': file,
-                'target': os.readlink(os.path.join(config['KERNEL_PATH'], file))
+                'branch': branch,
+                'target': os.readlink(os.path.join(config['kernel-path'], file))
             })
 
     for file in starget:
@@ -378,4 +523,4 @@ def kernel_list():
     return render_template("kernel.html", **content)
 
 print("[+] listening")
-app.run(host="0.0.0.0", port=config['HTTP_PORT'], debug=config['DEBUG'], threaded=True)
+app.run(host="0.0.0.0", port=config['http-port'], debug=config['debug'], threaded=True)

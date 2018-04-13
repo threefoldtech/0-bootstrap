@@ -1,0 +1,65 @@
+/* Move down content because we have a fixed navbar that is 3.5rem tall */
+body {
+  padding-top: 3.5rem;
+}
+
+.container-single {
+    padding-top: 2rem;
+}
+
+.kernel {
+    font-family: monospace;
+}
+
+.updated {
+    margin-left: 30px;
+}
+
+code {
+    vertical-align: middle;
+}
+
+.table-normal-head thead th {
+    padding: .75rem;
+}
+
+.jumbostep {
+    margin-bottom: 0;
+}
+
+.jumbostep1 {
+    background-color: #73a8af;
+}
+
+.jumbostep2 {
+    background-color: #f2ba9a;
+}
+
+.jumbostep3 {
+    background-color: #f3d19b;
+}
+
+.jumbostep4 {
+    background-color: #ffffff;
+    opacity: 0.05;
+    transition: 0.6s;
+}
+
+.jumbo-ok {
+    opacity: 1;
+    pointer-events: inherit;
+}
+
+.jumbo-nok {
+    pointer-events: none;
+    opacity: 0.1;
+}
+
+.boxfill {
+    /* margin-top: 2rem; */
+    padding-top: 2rem;
+}
+
+.table-summary hr {
+    border-top: 1px dashed #8c8b8b;
+}
