@@ -1,0 +1,17 @@
+#
+# You should adapt this part to your usage
+#
+config = {
+    'base-host': "http://default.tld",
+    'ipxe-template': "/opt/ipxe-template",
+    'ipxe-template-uefi': "/opt/ipxe-template-uefi",
+
+    'kernel-path': '/tmp/kernels',
+
+    'http-port': 5555,
+
+    # enable debug or production mode
+    'debug': True,
+
+    'popular': ['master', 'development'],
+}
