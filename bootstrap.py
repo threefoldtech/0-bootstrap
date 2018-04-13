@@ -49,9 +49,9 @@ def ipxe_script(branch, network, extra=""):
     script += "echo ================================\n"
     script += "echo \n\n"
     script += "echo Initializing network\n"
-    script += "dhcp\n\n"
+    script += "dhcp || goto failed\n\n"
     script += "echo Synchronizing time\n"
-    script += "ntp pool.ntp.org\n\n"
+    script += "ntp pool.ntp.org || \n\n"
     script += "echo \n"
     script += "show ip\n"
     script += "route\n"
@@ -65,8 +65,10 @@ def ipxe_script(branch, network, extra=""):
     if extra:
         script += " " + extra
 
-    script += "\nsleep 5"
-    
+    script += " ||\n"
+    script += "\n:failed\n"
+    script += "sleep 10"
+
     return script
 
 #
