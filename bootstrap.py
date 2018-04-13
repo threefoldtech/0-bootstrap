@@ -246,7 +246,10 @@ def uefi_branch_network_extra(branch, network, extra):
 
     print("[+] copying template")
     with tempfile.TemporaryDirectory() as tmpdir:
-        shutil.copytree(config['IPXE_TEMPLATE_UEFI'], os.path.join(tmpdir, "src"), True)
+        src = os.path.join(tmpdir, "src")
+        os.mkdir(src)
+        call(["cp", "-r", config['IPXE_TEMPLATE_UEFI'], src])
+        # shutil.copytree(config['IPXE_TEMPLATE_UEFI'], os.path.join(tmpdir, "src"), True)
 
         print("[+] creating ipxe script")
         with open(os.path.join(tmpdir, "boot.ipxe"), 'w') as f:
