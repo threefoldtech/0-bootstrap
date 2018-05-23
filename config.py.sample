@@ -14,4 +14,8 @@ config = {
     'debug': True,
 
     'popular': ['master', 'development'],
+    'popular-description': {
+        'master': 'Stable release',
+        'development': 'Staging version',
+    },
 }

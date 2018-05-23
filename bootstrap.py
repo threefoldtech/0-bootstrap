@@ -399,7 +399,8 @@ def homepage():
         content['links'].append({
             'name': filename,
             'branch': popular,
-            'target': os.readlink(endpoint)
+            'target': os.readlink(endpoint),
+            'info': config['popular-description'][popular]
         })
 
 

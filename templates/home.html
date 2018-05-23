@@ -64,7 +64,10 @@
               {% for link in links %}
                 <tr>
                     <td><a class="kernel" href="/generate/{{ link['branch'] }}">{{ link['branch'] }}</a></td>
-                    <td><code>{{ link['target'] }}</code></td>
+                    <td>
+                        <code>{{ link['target'] }}</code>
+                        <div class="text-info description">{{ link['info'] }}</div>
+                    </td>
                     <td><a href="/kernel/{{ link['name'] }}"><span class="octicon octicon-arrow-down"></span></a></td>
                 </tr>
               {% endfor %}
