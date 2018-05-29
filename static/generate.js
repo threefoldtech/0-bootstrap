@@ -1,7 +1,7 @@
 var allValid = false;
 var allValidReason = '';
 
-var buildlist = ['ipxe', 'iso', 'usb', 'uefi'];
+var buildlist = ['ipxe', 'iso', 'usb', 'uefi', 'krn'];
 var finalUrl = '...';
 var items = {
     'branch': '',
