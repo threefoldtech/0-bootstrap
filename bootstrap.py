@@ -103,6 +103,17 @@ def ipxe_error(message):
 
     return script
 
+def ipxe_provision():
+    script  = "#!ipxe"
+    script += "echo =================================\n"
+    script += "echo == Zero-OS Client Provisioning ==\n"
+    script += "echo =================================\n"
+    script += "echo \n\n"
+    script += "%s://%s/provision/${net0/mac}\n" % (protocol, request.host)
+
+    return script
+
+
 def text_reply(payload):
     response = make_response(payload)
     response.headers["Content-Type"] = "text/plain"
@@ -247,6 +258,37 @@ def uefi_generic():
         response.headers['Content-Disposition'] = "inline; filename=ipxe-zero-os-generic.efi"
 
     return response
+
+@app.route('/uefi-provision', methods=['GET'])
+def uefi_provision():
+    print("[+] provisioning uefi ipxe")
+
+    response = make_response("Request failed")
+
+    with tempfile.TemporaryDirectory() as tmpdir:
+        src = os.path.join(tmpdir, "src")
+
+        print("[+] copying template: %s > %s" % (config['ipxe-template-uefi'], src))
+        call(["cp", "-ar", config['ipxe-template-uefi'], src])
+
+        print("[+] creating ipxe script")
+        with open(os.path.join(tmpdir, "boot.ipxe"), 'w') as f:
+            f.write(ipxe_provision())
+
+        print("[+] building kernel")
+        script = os.path.join(BASEPATH, "scripts", "mkuefi-generic.sh")
+        call(["bash", script, tmpdir])
+
+        isocontents = ""
+        with open(os.path.join(tmpdir, "ipxe.efi"), 'rb') as f:
+            isocontents = f.read()
+
+        response = make_response(isocontents)
+        response.headers["Content-Type"] = "application/octet-stream"
+        response.headers['Content-Disposition'] = "inline; filename=ipxe-zero-os-provision.efi"
+
+    return response
+
 
 @app.route('/krn/<branch>', methods=['GET'])
 def krn_branch(branch):
