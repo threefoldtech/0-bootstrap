@@ -1,10 +1,12 @@
 import os
+import sys
 import shutil
 import time
 import tempfile
 import shutil
 import datetime
 import operator
+import sqlite3
 from subprocess import call
 from stat import *
 from flask import Flask, request, redirect, url_for, render_template, abort, Markup, make_response, send_from_directory
@@ -21,7 +23,19 @@ BASEPATH = os.path.join(thispath)
 app = Flask(__name__, static_url_path='/static')
 app.url_map.strict_slashes = False
 
+#
+# Database
+#
+db = sqlite3.connect(config['bootstrap-db'], check_same_thread=False)
 
+# sanity check
+try:
+    c = db.cursor()
+    c.execute("SELECT COUNT(*) FROM provision")
+
+except sqlite3.OperationalError:
+    print("[-] database not initialized, please check installation steps")
+    sys.exit(1)
 
 #
 # Helpers
@@ -70,6 +84,23 @@ def ipxe_script(branch, network, extra=""):
     script += "sleep 10"
 
     return script
+
+def ipxe_error(message):
+    script  = "#!ipxe\n"
+    script += "echo ================================\n"
+    script += "echo == Zero-OS Kernel Boot Loader ==\n"
+    script += "echo ================================\n"
+    script += "echo \n\n"
+    script += "echo Error: %s\n" % message
+    script += "sleep 240"
+
+    return script
+
+def text_reply(payload):
+    response = make_response(payload)
+    response.headers["Content-Type"] = "text/plain"
+
+    return response
 
 #
 # Routing
@@ -336,12 +367,21 @@ def ipxe_branch_network(branch, network):
 @app.route('/ipxe/<branch>/<network>/<extra>', methods=['GET'])
 def ipxe_branch_network_extra(branch, network, extra):
     print("[+] branch: %s, network: %s, extra: %s" % (branch, network, extra))
-    script = ipxe_script(branch, network, extra)
+    return text_reply(ipxe_script(branch, network, extra))
 
-    response = make_response(script)
-    response.headers["Content-Type"] = "text/plain"
+@app.route('/provision/<client>')
+def provision_client(client):
+    print("[+] provisioning client: %s" % client)
 
-    return response
+    t = (client,)
+    c = db.cursor()
+    c.execute('SELECT client, branch, zerotier, kargs FROM provision WHERE client = ?', t)
+
+    data = c.fetchone()
+    if data is None:
+        return text_reply(ipxe_error("no client registered with this identifier"))
+
+    return text_reply(ipxe_script(data[1], data[2], data[3]))
 
 #
 # Helpers

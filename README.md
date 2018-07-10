@@ -34,14 +34,17 @@ Theses are valid endpoint example:
 - `/ipxe/master/null/console=ttyS1` (special case to not set zerotier network)
 
 ### Branches
+
 You can specify any branches available, the list is displayed on the default webpage of the webservice
 
 ### ZeroTier Network ID
+
 The Network ID can be either public or private. If you don't provide ID, Zero-OS will listening for incoming connection on all interface.
 
 The special ID `null` or `0` can be set to still provide extra argument without having Network ID
 
 ### Extra Argument
+
 Everything set on the last argument will be forwarded as-it to the kernel argument. You can set spaces, etc.
 
 
@@ -52,7 +55,12 @@ To speedup ISO and USB images creation, the script will use a iPXE-template dire
 To pre-compile code, you can run the `setup/template.sh` script.
 This will prepare the template and put it on `/opt/ipxe-template`.
 
-In oder to compile correctly the sources, you'll need (ubuntu): `build-essential syslinux liblzma-dev libz-dev genisoimage isolinux wget dosfstools udev`
+In order to compile correctly the sources, you'll need (ubuntu): `build-essential syslinux liblzma-dev libz-dev genisoimage isolinux wget dosfstools udev`
+
+### Database
+
+Clients can be provisioned on the runtime using a database, you need to create the database, even if it's empty.
+Just run: `cat db/schema.sql | sqlite3 db/bootstrap.sqlite3`
 
 ## Run
 
@@ -63,11 +71,14 @@ Kernel images will be served from `kernel` directory. Images are in form: `zero-
 ## Configuration
 
 You can customize the service by editing `config.py`:
-- `BASE_HOST`: http web address (eg: https://bootstrap.gig.tech)
-- `IPXE_TEMPLATE`: iPXE template path (by default, setup script install it to `/opt/ipxe-template`)
-- `KERNEL_PATH`: path where to find kernels
-- `HTTP_PORT`: http listen port,
-- `DEBUG`: enable (True) or disable (False) debug Flask
+- `base-host`: http web address (eg: https://bootstrap.gig.tech)
+- `ipxe-template`: iPXE template path (by default, setup script install it to `/opt/ipxe-template`)
+- `ipxe-template-uefi`: iPXE UEFI template path (by default, setup script install it to `/opt/ipxe-template-uefi`)
+- `kernel-path`: path where to find kernels
+- `http-port`: http listen port,
+- `debug`: enable (True) or disable (False) debug Flask
+- `popular`: list of branches to mark as popular on the homepage
+- `popular-description`: list of branches with their description (on the homepage)
 
 ## Documentation
 
