@@ -17,6 +17,7 @@ You can generate a bootable image with a bundle boot-script via:
 Static target:
 - `/krn-generic`: build a generic ipxe kernel, with our SSL certificates authorized
 - `/uefi-generic`: build a generic ipxe uefi bootable image, with our SSL certificates authorized
+- `/krn-provision`: build a generic ipxe kernel, calling our provisioning endpoint with nic mac address
 - `/uefi-provision`: build a generic ipxe uefi bootable, calling our provisioning endpoint with nic mac address
 - `/kernel/[name]`: provide the kernel (static file)
 
