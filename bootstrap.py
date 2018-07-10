@@ -104,12 +104,16 @@ def ipxe_error(message):
     return script
 
 def ipxe_provision():
-    script  = "#!ipxe"
+    protocol = 'https'
+    if 'unsecure' in request.host:
+        protocol = 'http'
+
+    script  = "#!ipxe\n"
     script += "echo =================================\n"
     script += "echo == Zero-OS Client Provisioning ==\n"
     script += "echo =================================\n"
     script += "echo \n\n"
-    script += "%s://%s/provision/${net0/mac}\n" % (protocol, request.host)
+    script += "chain %s://%s/provision/${net0/mac}\n" % (protocol, request.host)
 
     return script
 
@@ -276,7 +280,7 @@ def uefi_provision():
             f.write(ipxe_provision())
 
         print("[+] building kernel")
-        script = os.path.join(BASEPATH, "scripts", "mkuefi-generic.sh")
+        script = os.path.join(BASEPATH, "scripts", "mkuefi.sh")
         call(["bash", script, tmpdir])
 
         isocontents = ""
