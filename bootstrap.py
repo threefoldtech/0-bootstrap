@@ -26,16 +26,23 @@ app.url_map.strict_slashes = False
 #
 # Database
 #
-db = sqlite3.connect(config['bootstrap-db'], check_same_thread=False)
+def db_open():
+    return sqlite3.connect(config['bootstrap-db'])
 
-# sanity check
-try:
-    c = db.cursor()
-    c.execute("SELECT COUNT(*) FROM provision")
+def db_check():
+    db = db_open()
 
-except sqlite3.OperationalError:
-    print("[-] database not initialized, please check installation steps")
-    sys.exit(1)
+    # sanity check
+    try:
+        c = db.cursor()
+        c.execute("SELECT COUNT(*) FROM provision")
+        db.close()
+
+    except sqlite3.OperationalError:
+        print("[-] database not initialized, please check installation steps")
+        sys.exit(1)
+
+db_check()
 
 #
 # Helpers
@@ -373,11 +380,14 @@ def ipxe_branch_network_extra(branch, network, extra):
 def provision_client(client):
     print("[+] provisioning client: %s" % client)
 
+    db = db_open()
     t = (client,)
     c = db.cursor()
-    c.execute('SELECT client, branch, zerotier, kargs FROM provision WHERE client = ?', t)
 
+    c.execute('SELECT client, branch, zerotier, kargs FROM provision WHERE client = ?', t)
     data = c.fetchone()
+    db.close()
+
     if data is None:
         return text_reply(ipxe_error("no client registered with this identifier"))
 
