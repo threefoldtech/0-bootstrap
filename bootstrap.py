@@ -113,7 +113,18 @@ def ipxe_provision():
     script += "echo == Zero-OS Client Provisioning ==\n"
     script += "echo =================================\n"
     script += "echo \n\n"
+    script += "echo Initializing network\n"
+    script += "dhcp || goto failed\n\n"
+    script += "echo Synchronizing time\n"
+    script += "ntp pool.ntp.org || \n\n"
+    script += "echo \n"
+    script += "show ip\n"
+    script += "route\n"
+    script += "echo \n\n"
+    script += "echo Requesting provisioning configuration...\n"
     script += "chain %s://%s/provision/${net0/mac}\n" % (protocol, request.host)
+    script += "\n:failed\n"
+    script += "sleep 10\n"
 
     return script
 
