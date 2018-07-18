@@ -146,8 +146,6 @@ def ipxe_provision():
     script += "echo Initializing network\n"
     script += "\n"
     script += ":loop isset ${net${idx}/mac} || goto loop_done\n"
-    script += 'echo Initializing net${idx} [${net${idx}/mac}]'
-    script += "\n"
     script += "ifconf --configurator dhcp net${idx} || goto loop_fail\n"
     script += "echo Synchronizing time\n"
     script += "ntp pool.ntp.org || \n\n"
