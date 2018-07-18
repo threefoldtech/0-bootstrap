@@ -108,14 +108,16 @@ def ipxe_quick_script(branch, network, extra=""):
     kernel = "%s://%s/kernel/%s" % (get_protocol(), request.host, source)
 
     script  = "#!ipxe\n"
+    script += "echo \n\n"
+
     script += "echo ==================================\n"
     script += "echo == Zero-OS Client Configuration ==\n"
     script += "echo ==================================\n"
 
     script += "echo \n\n"
-    script += "echo Version (branch): %s\n" % branch
-    script += "echo Zerotier network: %s\n" % network
-    script += "echo Kernel arguments: %s\n" % extra
+    script += "echo Version.....: %s\n" % branch
+    script += "echo Network ID..: %s\n" % network
+    script += "echo Parameters..: %s\n" % extra
     script += "echo \n\n"
 
     script += "echo Downloading Zero-OS image...\n"
