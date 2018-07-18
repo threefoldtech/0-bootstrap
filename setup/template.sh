@@ -9,7 +9,7 @@ echo "[+] preparing ipxe template on: ${template}"
 
 echo "[+] downloading source code"
 pushd /tmp
-git clone --depth=1 https://github.com/zero-os/0-bootstrap
+git clone --depth=1 https://github.com/gigforks/ipxe
 
 echo "[+] preparing images"
 cp -r ipxe ipxe-legacy
