@@ -133,17 +133,6 @@ def ipxe_quick_script(branch, network, extra=""):
 
     return script
 
-def ipxe_error(message):
-    script  = "#!ipxe\n"
-    script += "echo ================================\n"
-    script += "echo == Zero-OS Kernel Boot Loader ==\n"
-    script += "echo ================================\n"
-    script += "echo \n\n"
-    script += "echo Error: %s\n" % message
-    script += "sleep 240"
-
-    return script
-
 def ipxe_provision():
     script  = "#!ipxe\n"
     script += "echo =================================\n"
@@ -165,7 +154,7 @@ def ipxe_provision():
     script += "route\n"
     script += "echo \n\n"
     script += "echo Requesting provisioning configuration...\n"
-    script += "chain %s://%s/provision/${net0/mac} || goto loop_fail\n" % (get_protocol(), request.host)
+    script += "chain %s://%s/provision/${net${idx}/mac} || goto loop_fail\n" % (get_protocol(), request.host)
 
     script += "\n:failed\n"
     script += "sleep 10\n\n"
