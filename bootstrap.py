@@ -92,6 +92,41 @@ def ipxe_script(branch, network, extra=""):
 
     return script
 
+def ipxe_quick_script(branch, network, extra=""):
+    source = 'zero-os-%s.efi' % branch
+    kernel = os.path.join(config['kernel-path'], source)
+
+    if not os.path.exists(kernel):
+        source = '%s.efi' % branch
+        kernel = os.path.join(config['kernel-path'], source)
+
+        if not os.path.exists(kernel):
+            abort(404)
+
+    protocol = 'https'
+    if 'unsecure' in request.host:
+        protocol = 'http'
+
+    kernel = "%s://%s/kernel/%s" % (protocol, request.host, source)
+
+    script  = "#!ipxe\n"
+    script += "echo Synchronizing time\n"
+    script += "ntp pool.ntp.org || \n\n"
+    script += "echo Downloading Zero-OS image...\n"
+    script += "chain %s" % kernel
+
+    if network and network != "null" and network != "0":
+        script += " zerotier=%s" % network
+
+    if extra:
+        script += " " + extra
+
+    script += " ||\n"
+    script += "\n:failed\n"
+    script += "sleep 10"
+
+    return script
+
 def ipxe_error(message):
     script  = "#!ipxe\n"
     script += "echo ================================\n"
@@ -479,7 +514,7 @@ def provision_client(client):
     if data is None:
         return text_reply(ipxe_error("no client registered with this identifier"))
 
-    return text_reply(ipxe_script(data[1], data[2], data[3]))
+    return text_reply(ipxe_quick_script(data[1], data[2], data[3]))
 
 #
 # Helpers
