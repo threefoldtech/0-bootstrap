@@ -47,6 +47,12 @@ db_check()
 #
 # Helpers
 #
+def get_protocol():
+    if 'unsecure' in request.host:
+        return 'http'
+
+    return 'https'
+
 def ipxe_script(branch, network, extra=""):
     source = 'zero-os-%s.efi' % branch
     kernel = os.path.join(config['kernel-path'], source)
@@ -58,11 +64,7 @@ def ipxe_script(branch, network, extra=""):
         if not os.path.exists(kernel):
             abort(404)
 
-    protocol = 'https'
-    if 'unsecure' in request.host:
-        protocol = 'http'
-
-    kernel = "%s://%s/kernel/%s" % (protocol, request.host, source)
+    kernel = "%s://%s/kernel/%s" % (get_protocol(), request.host, source)
 
     script  = "#!ipxe\n"
     script += "echo ================================\n"
@@ -103,15 +105,19 @@ def ipxe_quick_script(branch, network, extra=""):
         if not os.path.exists(kernel):
             abort(404)
 
-    protocol = 'https'
-    if 'unsecure' in request.host:
-        protocol = 'http'
-
-    kernel = "%s://%s/kernel/%s" % (protocol, request.host, source)
+    kernel = "%s://%s/kernel/%s" % (get_protocol(), request.host, source)
 
     script  = "#!ipxe\n"
-    script += "echo Synchronizing time\n"
-    script += "ntp pool.ntp.org || \n\n"
+    script += "echo ==================================\n"
+    script += "echo == Zero-OS Client Configuration ==\n"
+    script += "echo ==================================\n"
+
+    script += "echo \n\n"
+    script += "echo Branch  : %s\n" % branch
+    script += "echo Zerotier: %s\n" % network
+    script += "echo Options : %s\n" % extra
+    script += "echo \n\n"
+
     script += "echo Downloading Zero-OS image...\n"
     script += "chain %s" % kernel
 
@@ -139,10 +145,6 @@ def ipxe_error(message):
     return script
 
 def ipxe_provision():
-    protocol = 'https'
-    if 'unsecure' in request.host:
-        protocol = 'http'
-
     script  = "#!ipxe\n"
     script += "echo =================================\n"
     script += "echo == Zero-OS Client Provisioning ==\n"
@@ -163,7 +165,7 @@ def ipxe_provision():
     script += "route\n"
     script += "echo \n\n"
     script += "echo Requesting provisioning configuration...\n"
-    script += "chain %s://%s/provision/${net0/mac} || goto loop_fail\n" % (protocol, request.host)
+    script += "chain %s://%s/provision/${net0/mac} || goto loop_fail\n" % (get_protocol(), request.host)
 
     script += "\n:failed\n"
     script += "sleep 10\n\n"
@@ -173,7 +175,6 @@ def ipxe_provision():
 
     script += ":loop_done\n"
     script += "echo No network connectivity.\n"
-
 
     return script
 
