@@ -113,9 +113,9 @@ def ipxe_quick_script(branch, network, extra=""):
     script += "echo ==================================\n"
 
     script += "echo \n\n"
-    script += "echo Branch  : %s\n" % branch
-    script += "echo Zerotier: %s\n" % network
-    script += "echo Options : %s\n" % extra
+    script += "echo Version (branch): %s\n" % branch
+    script += "echo Zerotier network: %s\n" % network
+    script += "echo Kernel arguments: %s\n" % extra
     script += "echo \n\n"
 
     script += "echo Downloading Zero-OS image...\n"
