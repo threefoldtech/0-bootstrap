@@ -148,8 +148,14 @@ def ipxe_provision():
     script += "echo == Zero-OS Client Provisioning ==\n"
     script += "echo =================================\n"
     script += "echo \n\n"
+    script += "set idx:int32 0"
+    script += "\n"
     script += "echo Initializing network\n"
-    script += "dhcp || goto failed\n\n"
+    script += "\n"
+    script += ":loop isset ${net${idx}/mac} || goto loop_done\n"
+    script += 'echo Initializing net${idx} [${net${idx}/mac}]'
+    script += "\n"
+    script += "ifconf --configurator dhcp net${idx} || goto loop_fail\n"
     script += "echo Synchronizing time\n"
     script += "ntp pool.ntp.org || \n\n"
     script += "echo \n"
@@ -157,9 +163,17 @@ def ipxe_provision():
     script += "route\n"
     script += "echo \n\n"
     script += "echo Requesting provisioning configuration...\n"
-    script += "chain %s://%s/provision/${net0/mac}\n" % (protocol, request.host)
+    script += "chain %s://%s/provision/${net0/mac} || goto loop_fail\n" % (protocol, request.host)
+
     script += "\n:failed\n"
-    script += "sleep 10\n"
+    script += "sleep 10\n\n"
+
+    script += ":loop_fail\n"
+    script += "inc idx && goto loop\n\n"
+
+    script += ":loop_done\n"
+    script += "echo No network connectivity.\n"
+
 
     return script
 
@@ -512,7 +526,8 @@ def provision_client(client):
     db.close()
 
     if data is None:
-        return text_reply(ipxe_error("no client registered with this identifier"))
+        print("[-] no client registered with this identifier")
+        abort(404)
 
     return text_reply(ipxe_quick_script(data[1], data[2], data[3]))
 
