@@ -75,10 +75,17 @@ def ipxe_script(branch, network, extra=""):
     script += "dhcp || goto failed\n\n"
     script += "echo Synchronizing time\n"
     script += "ntp pool.ntp.org || \n\n"
+
     script += "echo \n"
     script += "show ip\n"
     script += "route\n"
     script += "echo \n\n"
+
+    script += "echo Version.....: %s\n" % branch
+    script += "echo Network ID..: %s\n" % network
+    script += "echo Parameters..: %s\n" % extra
+    script += "echo \n\n"
+
     script += "echo Downloading Zero-OS image...\n"
     script += "chain %s" % kernel
 
