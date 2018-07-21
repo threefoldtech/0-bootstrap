@@ -68,3 +68,7 @@ code {
 .description {
     padding: 0.4em;
 }
+
+.generated-code {
+    width: 830px;
+}
