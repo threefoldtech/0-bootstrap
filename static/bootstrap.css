@@ -17,6 +17,7 @@ body {
 
 code {
     vertical-align: middle;
+    overflow-wrap: break-word; /* firefox fix */
 }
 
 .table-normal-head thead th {
