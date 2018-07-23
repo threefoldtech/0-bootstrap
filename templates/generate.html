@@ -15,6 +15,7 @@
     var baseurl = "{{ baseurl }}";
     </script>
     <script src="/static/generate.js"></script>
+    <script src="/static/jsrsasign-all-min.js"></script>
   </head>
 
   <body onload="update_trigger()">
@@ -55,7 +56,7 @@
           <h1>Step 1: choose your branch (version)</h1>
           <p>
           The branch is like a version name.
-          If you don't know which one to choose, take <code>master</code> which is the current stable release.
+          If you don't know which one to choose, go for <code>master</code> which is the current stable release.
           </p>
           <div class="alert alert-light boxfill" role="alert">
           <form>
@@ -105,17 +106,52 @@
 
       <div class="jumbotron jumbostep jumbostep3">
         <div class="container">
-          <h1>Step 3 (optional): set your custom arguments</h1>
-          <p>You can moreover pass any argument you want to the kernel.
-          Please note that arguments are space delimited (not coma delimited). If you want to protect your system
-          with ItsYou.Online authentification, you should place here some <code>organization=</code>
-          </p>
+          <h1>Step 3 (optional): set your custom settings</h1>
+          <p class="explain">You can moreover pass special arguments to the system.</p>
+          <p class="explain">We support default arguments Zero-OS uses and are required for some usecase,
+          if you want to pass even more customized settings, please generate the URL on your own.</p>
+
           <div class="alert alert-light boxfill" role="alert">
           <form>
               <div class="form-group row">
-                <label for="kargs" class="col-sm-2 col-form-label">Parameters</label>
+                <label for="kargs-org" class="col-sm-2 col-form-label">Organization</label>
                 <div class="col-sm-10">
-                    <input type="text" class="form-control" id="kargs" placeholder="eg: organization=my-org" onkeyup="update_trigger()">
+                    <input type="text" class="form-control" id="kargs-org" placeholder="eg: my-itsyou-online-organization" onkeyup="update_trigger()">
+                    <p class="tip">Organization is used to protect your system with authentification.</p>
+                </div>
+              </div>
+
+              <div class="form-group row">
+                <label for="kargs-farmer" class="col-sm-2 col-form-label">Farmer ID</label>
+                <div class="input-group col-sm-10">
+                    <input type="text" class="form-control" id="kargs-farmer" placeholder="eg: eyJhbGciOiJFUzM4NCIsInR5cCI6IkpX..." onkeyup="update_trigger_jwt()">
+                    <div class="input-group-append">
+                        <span class="input-group-text" id="kargs-farmer-org"></span>
+                    </div>
+                </div>
+              </div>
+              <div class="form-group row">
+                 <div class="col-sm-2"></div>
+                 <div class="col-sm-10 tip">
+                     The Farmer ID is a unique identifier for your farm and is used by the capacity registration.
+                 </div>
+              </div>
+
+              <div class="form-group row">
+                <label for="kargs" class="col-sm-2 col-form-label">Advanced</label>
+                <div class="col-sm-10">
+                    <div class="form-check" style="margin-top: 1rem;">
+                        <input class="form-check-input" type="checkbox" value="" id="development" onchange="update_trigger()">
+                        <label class="form-check-label" for="development">
+                         Enable <code>development</code> flag: reduce restriction to reach your machine, useful for troubleshooting
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="" id="debug" onchange="update_trigger()">
+                        <label class="form-check-label" for="debug">
+                         Enable <code>debug</code> flag: reduce even more restriction and enable extra debug message (expert users)
+                        </label>
+                    </div>
                 </div>
               </div>
           </form>

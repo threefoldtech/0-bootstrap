@@ -72,3 +72,15 @@ code {
 .generated-code {
     width: 830px;
 }
+
+p.tip {
+    padding: 0.6em 1em 0em 1em;
+}
+
+div.tip {
+    padding: 0 1em 0 2em;
+}
+
+p.explain {
+    padding: 0.4em 1em 0em 1em;
+}
