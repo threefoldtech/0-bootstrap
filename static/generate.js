@@ -123,8 +123,8 @@ function update_trigger(initialAllValid) {
     if(document.getElementById('debug').checked)
         kargs.push("debug");
 
-    if(document.getElementById('backdoor').checked)
-        kargs.push("backdoor");
+    if(document.getElementById('support').checked)
+        kargs.push("support");
 
     // append global jwt (if set)
     if(jwtkargs)
