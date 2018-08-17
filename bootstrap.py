@@ -29,14 +29,22 @@ app.url_map.strict_slashes = False
 def db_open():
     return sqlite3.connect(config['bootstrap-db'])
 
+def db_logs_open():
+    return sqlite3.connect(config['logs-db'])
+
 def db_check():
     db = db_open()
+    dbl = db_logs_open()
 
     # sanity check
     try:
         c = db.cursor()
         c.execute("SELECT COUNT(*) FROM provision")
         db.close()
+
+        c = dbl.cursor()
+        c.execute("SELECT COUNT(*) FROM logs")
+        dbl.close()
 
     except sqlite3.OperationalError:
         print("[-] database not initialized, please check installation steps")
@@ -510,6 +518,15 @@ def ipxe_branch_network_extra(branch, network, extra):
     print("[+] branch: %s, network: %s, extra: %s" % (branch, network, extra))
     return text_reply(ipxe_script(branch, network, extra))
 
+def provision_log(client):
+    dbl = db_logs_open()
+    c = dbl.cursor()
+
+    t = (client, request.remote_addr,)
+
+    c.execute("INSERT INTO logs (client, hit, timestamp) VALUES (?, ?, datetime('now'))", t)
+    dbl.close()
+
 @app.route('/provision/<client>')
 def provision_client(client):
     print("[+] provisioning client: %s" % client)
@@ -521,6 +538,8 @@ def provision_client(client):
     c.execute('SELECT client, branch, zerotier, kargs FROM provision WHERE client = ?', t)
     data = c.fetchone()
     db.close()
+
+    provision_log(client)
 
     if data is None:
         print("[-] no client registered with this identifier")

@@ -21,4 +21,5 @@ config = {
 
     # sqlite3 database used for provisioning
     'bootstrap-db': 'db/bootstrap.sqlite3',
+    'logs-db': 'db/logs.sqlite3',
 }
