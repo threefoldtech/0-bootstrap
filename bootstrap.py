@@ -525,6 +525,7 @@ def provision_log(client):
     t = (client, request.remote_addr,)
 
     c.execute("INSERT INTO logs (client, hit, timestamp) VALUES (?, ?, datetime('now'))", t)
+    dbl.commit()
     dbl.close()
 
 @app.route('/provision/<client>')
