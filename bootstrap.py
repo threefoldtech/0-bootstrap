@@ -9,7 +9,7 @@ import operator
 import sqlite3
 from subprocess import call
 from stat import *
-from flask import Flask, request, redirect, url_for, render_template, abort, Markup, make_response, send_from_directory
+from flask import Flask, request, redirect, url_for, render_template, abort, Markup, make_response, send_from_directory, jsonify
 from werkzeug.utils import secure_filename
 from werkzeug.contrib.fixers import ProxyFix
 from config import config
@@ -547,6 +547,27 @@ def provision_client(client):
         abort(404)
 
     return text_reply(ipxe_quick_script(data[1], data[2], data[3]))
+
+@app.route('/provision-list')
+def provision_list():
+    if request.headers.get('X-Bootstrap-Auth') != config['provision-password']:
+        abort(401)
+
+    db = db_open()
+    c = db.cursor()
+    c.execute('SELECT client, branch, zerotier, kargs FROM provision')
+    clients = c.fetchall()
+    db.close()
+
+    response = {}
+    for client in clients:
+        response[client[0]] = {
+            'ver': client[1],
+            'zt': client[2],
+            'ka': client[3],
+        }
+
+    return jsonify(response)
 
 #
 # Helpers
