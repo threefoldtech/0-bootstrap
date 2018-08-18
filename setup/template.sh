@@ -33,8 +33,13 @@ make ${makeopts} bin-x86_64-efi/ipxe.efi CERT=${mkcert} TRUST=${mktrust}
 popd
 
 echo "[+] installing templates"
+rm -rf ${template}
+rm -rf ${templateuefi}
+
 cp -ar ipxe-legacy/src ${template}
 cp -ar ipxe-uefi/src ${templateuefi}
+
+echo "[+] cleaning temporary pre-computed files"
 rm -rf ipxe-legacy ipxe-uefi
 
 echo "[+] ================================================================"
