@@ -3,15 +3,17 @@ set -e
 
 template="/opt/ipxe-template"
 templateuefi="/opt/ipxe-template-uefi"
-makeopts="-j 10"
+makeopts="-j 16"
 
 echo "[+] preparing ipxe template on: ${template}"
 
 echo "[+] downloading source code"
 pushd /tmp
+rm -rf ipxe
 git clone --depth=1 https://github.com/gigforks/ipxe
 
 echo "[+] preparing images"
+rm -rf ipxe-legacy ipxe-uefi
 cp -r ipxe ipxe-legacy
 cp -r ipxe ipxe-uefi
 
@@ -33,6 +35,7 @@ popd
 echo "[+] installing templates"
 cp -ar ipxe-legacy/src ${template}
 cp -ar ipxe-uefi/src ${templateuefi}
+rm -rf ipxe-legacy ipxe-uefi
 
 echo "[+] ================================================================"
 echo "[+] ipxe legacy template installed on: ${template}"
