@@ -688,7 +688,6 @@ def generate():
     content = {
         'basebranch': '',
         'branches': sources,
-        'baseurl': config['base-host'],
     }
 
     return render_template("generate.html", **content)
@@ -697,7 +696,6 @@ def generate():
 def generate_based(base):
     content = {
         'basebranch': base,
-        'baseurl': config['base-host'],
     }
     return render_template("generate.html", **content)
 

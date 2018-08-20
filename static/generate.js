@@ -1,6 +1,8 @@
 var allValid = false;
 var allValidReason = '';
 
+var baseurl = 'https://' + window.location.hostname;
+
 var jwtkargs = null;
 var buildlist = ['ipxe', 'iso', 'usb', 'uefi', 'krn'];
 var finalUrl = '...';
