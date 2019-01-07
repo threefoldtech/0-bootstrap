@@ -85,6 +85,7 @@ def ipxe_script(branch, network, extra=""):
     script += "ntp pool.ntp.org || \n\n"
 
     script += "echo \n"
+    script += "show dns\n"
     script += "show ip\n"
     script += "route\n"
     script += "echo \n\n"
@@ -166,6 +167,7 @@ def ipxe_provision():
     script += "ntp pool.ntp.org || \n\n"
     script += "echo \n"
     script += "show ip\n"
+    script += "show dns\n"
     script += "route\n"
     script += "echo \n\n"
     script += "echo Requesting provisioning configuration...\n"
