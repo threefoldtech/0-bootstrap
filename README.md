@@ -64,6 +64,11 @@ In order to compile correctly the sources, you'll need (ubuntu): `build-essentia
 Clients can be provisioned on the runtime using a database, you need to create the database, even if it's empty.
 Just run: `cat db/schema.sql | sqlite3 db/bootstrap.sqlite3`
 
+## Provision
+
+The endpoint `/provision/[mac-address]` used the database to provide iPXE script generated on the fly for client from
+MAC Address provided. This is used by the provision image.
+
 ## Run
 
 This is a `Flask` web service, just run the `bootstrap.py` server file. On ubuntu, you'll need `python3-flask`.
@@ -85,3 +90,7 @@ You can customize the service by editing `config.py`:
 ## Documentation
 
 For more documentation see the [`/docs`](./docs) directory, where you'll find a [table of contents](/docs/SUMMARY.md).
+
+# Repository Owner
+- [Maxime Daniel](https://github.com/maxux), Telegram: [@maxux](http://t.me/maxux)
+
