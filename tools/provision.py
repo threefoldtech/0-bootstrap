@@ -30,10 +30,15 @@ def add(address, branch, zerotier, options):
     print("[+] ")
     print("[+] inserting into database")
 
-    db = database()
-    args = (address, branch, zerotier, options)
-    stmt = db.execute('INSERT INTO provision VALUES(?, ?, ?, ?);', args)
-    db.commit()
+    try:
+        db = database()
+        args = (address, branch, zerotier, options)
+        stmt = db.execute('INSERT INTO provision VALUES(LOWER(?), ?, ?, ?);', args)
+        db.commit()
+
+    except sqlite3.IntegrityError as e:
+        print("[-] address already exists, please delete it to update it")
+        sys.exit(1)
 
     print("[+] client added")
 
