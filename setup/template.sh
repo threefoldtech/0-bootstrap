@@ -10,7 +10,7 @@ echo "[+] preparing ipxe template on: ${template}"
 echo "[+] downloading source code"
 pushd /tmp
 rm -rf ipxe
-git clone --depth=1 https://github.com/gigforks/ipxe
+git clone --depth=1 https://github.com/threefoldtech/ipxe
 
 echo "[+] preparing images"
 rm -rf ipxe-legacy ipxe-uefi
