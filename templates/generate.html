@@ -4,22 +4,29 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="Zero-OS Bootstrap">
-    <meta name="author" content="Green IT Globe">
+    <meta name="author" content="ThreeFold Tech">
 
-    <title>Zero-OS Bootstrap :: Generator</title>
+    <title>Zero-OS Bootstrap Image Generator</title>
 
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/octicons/4.4.0/font/octicons.css">
-    <link href="/static/bootstrap.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Quicksand|Roboto:300&display=swap">
+    <link rel="stylesheet" href="/static/bootstrap.css">
+
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"></script>
     <script type="text/javascript">
     var baseurl = "{{ baseurl }}";
+    $(document).ready(function() {
+        $("#farmerid").focus();
+        update_trigger();
+    });
     </script>
     <script src="/static/generate.js"></script>
-    <script src="/static/jsrsasign-all-min.js"></script>
   </head>
 
-  <body onload="update_trigger_jwt()">
+  <body>
     <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+      <div class="container">
       <a class="navbar-brand" href="/">Zero-OS Bootstrap</a>
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsDefault" aria-controls="navbarsDefault" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
@@ -31,135 +38,47 @@
             <a class="nav-link active" href="/generate">Generator <span class="sr-only">(current)</span></a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="/branches">Branches</a>
-          </li>
-          <li class="nav-item">
             <a class="nav-link" href="/images">Images list</a>
           </li>
         </ul>
       </div>
+      </div>
     </nav>
 
     <main role="main">
+      <div class="jumbotron">
+        <div class="container">
+          <h1 class="display-3">Zero-OS Bootstrapping</h1>
+          <p>
+            Welcome to the Zero-OS Boot Generator Assistant which will helps you to generate your own
+            boot device for your system. Please follow the next steps.
+
+            Theses steps will guide you to setup a boot device ready to use Zero-OS v2.
+          </p>
+        </div>
+      </div>
+
       <div class="jumbotron jumbostep">
         <div class="container">
-          <h1 class="display-3">Zero-OS Boot Generator</h1>
-          <p>
-            Welcome to the Boot Generator Assistant which will helps you to generate your own
-            boot device for your system. Please follow the next steps.
-          </p>
-        </div>
-      </div>
+          <h1 class="text-center">Who are you ?</h2>
 
-      <div class="jumbotron jumbostep jumbostep1">
-        <div class="container">
-          <h1>Step 1: choose your branch (version)</h1>
-          <p>
-          The branch is like a version name.
-          If you don't know which one to choose, go for <code>master</code> which is the current stable release.
-          </p>
-          <div class="alert alert-light boxfill" role="alert">
-          <form>
-              <div class="form-group row">
-                <label for="branch" class="col-sm-2 col-form-label">Branch</label>
-                <div class="col-sm-10">
-                    {% if basebranch %}
-                    <input type="text" class="form-control" id="branch" value="{{ basebranch }}" readonly>
-                    {% else %}
-                    <select class="form-control" name="branch" id="branch" onchange="update_trigger()">
-                        {% for branch in branches %}
-                        <option value="{{ branch['branch'] }}">{{ branch['branch'] }}</option>
-                        {% endfor %}
-                    </select>
-                    {% endif %}
-                </div>
-              </div>
-          </form>
-          </div>
-        </div>
-      </div>
-
-      <div class="jumbotron jumbostep jumbostep2">
-        <div class="container">
-          <h1>Step 2: choose your Zerotier Network ID</h1>
-          <p>Zerotier Network ID is an 16 characters ID. This Network ID will be joined as soon as
-          the Zero-OS will reach an Internet connection. This is the default way to reach your system.</p>
-          <div class="alert alert-light boxfill" role="alert">
-          <form>
-              <div class="form-group row">
-                <label for="earth" class="col-sm-2 col-form-label">ZeroTier</label>
-                <div class="col-sm-10">
-                    <input type="text" class="form-control" id="ztnet" placeholder="eg: 8056c2e21c000001" onkeyup="update_trigger()">
-                    <div class="form-check" style="margin-top: 1rem;">
-                        <input class="form-check-input" type="checkbox" value="" id="nozt" onchange="update_trigger()">
-                        <label class="form-check-label" for="nozt">
-                         Check this box if you don't want to connect to a Zerotier Network.<br>
-                         You should only check this box if you know what you are doing.
-                        </label>
-                    </div>
-                </div>
-              </div>
-          </form>
-          </div>
-        </div>
-      </div>
-
-      <div class="jumbotron jumbostep jumbostep3">
-        <div class="container">
-          <h1>Step 3 (optional): set your custom settings</h1>
-          <p class="explain">You can moreover pass special arguments to the system.</p>
-          <p class="explain">We support default arguments Zero-OS uses and are required for some usecase,
-          if you want to pass even more customized settings, please generate the URL on your own.</p>
+          <p>In order to identify and link the operating system to your farm, you need to set your
+          Farmer ID on the system.<br>
+          <a href="#" target="_blank">You can find more information here.</a></p>
 
           <div class="alert alert-light boxfill" role="alert">
           <form>
-              <div class="form-group row">
-                <label for="kargs-org" class="col-sm-2 col-form-label">Organization</label>
-                <div class="col-sm-10">
-                    <input type="text" class="form-control" id="kargs-org" placeholder="eg: my-itsyou-online-organization" onkeyup="update_trigger()">
-                    <p class="tip">Organization is used to protect your system with authentification.</p>
-                </div>
-              </div>
-
               <div class="form-group row">
                 <label for="kargs-farmer" class="col-sm-2 col-form-label">Farmer ID</label>
                 <div class="input-group col-sm-10">
-                    <input type="text" class="form-control" id="kargs-farmer" placeholder="eg: eyJhbGciOiJFUzM4NCIsInR5cCI6IkpX..." onkeyup="update_trigger_jwt()">
-                    <div class="input-group-append">
-                        <span class="input-group-text" id="kargs-farmer-org"></span>
-                    </div>
+                    <input type="text" class="form-control" id="farmerid" placeholder="Example: A3y5F8CoHVZiq3SvtY9pcJXC67aotSPk8AKMZYzkxyb6" onkeyup="update_trigger()">
                 </div>
               </div>
               <div class="form-group row">
                  <div class="col-sm-2"></div>
                  <div class="col-sm-10 tip">
-                     The Farmer ID is a unique identifier for your farm and is used by the capacity registration.
+                     <!-- The Farmer ID is your public key encoded in base64 and is mandatory. -->
                  </div>
-              </div>
-
-              <div class="form-group row">
-                <label for="kargs" class="col-sm-2 col-form-label">Advanced</label>
-                <div class="col-sm-10">
-                    <div class="form-check" style="margin-top: 1rem;">
-                        <input class="form-check-input" type="checkbox" value="" id="development" onchange="update_trigger()">
-                        <label class="form-check-label" for="development">
-                         Enable <code>development</code> flag: reduce restriction to reach your machine, useful for troubleshooting
-                        </label>
-                    </div>
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" value="" id="debug" onchange="update_trigger()">
-                        <label class="form-check-label" for="debug">
-                         Enable <code>debug</code> flag: reduce even more restriction and enable extra debug message (expert users)
-                        </label>
-                    </div>
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" value="" id="support" onchange="update_trigger()">
-                        <label class="form-check-label" for="support">
-                         Enable <code>support</code> flag: gives access to our technical guardians of the threefold grid for troubleshooting and support purposes (check this only if requested)
-                        </label>
-                    </div>
-
-                </div>
               </div>
           </form>
           </div>
@@ -168,22 +87,95 @@
 
       <div class="jumbotron jumbostep">
         <div class="container">
-          <h1>Generated URL</h1>
-          <p>
-          You have nothing more to do. Here, for you information, is the URL generated to build your request.
-          </p>
-          <div class="alert alert-light" role="alert">
-              <code id="userurl">...</code>
-          </form>
+          <h1 class="text-center">Which release do you want ?</h1>
+
+          <p>Zero-OS comes by default with 3 differents <code>running mode</code>. Each mode have their own settings,
+          own network and own purpose.<br>
+          Please choose the release you want.</p>
+
+          <div class="card-deck mb-3">
+            <div class="card mb-4 shadow-sm border-success tf-card tf-card-selected" id="tf-runmode-prod">
+              <div class="card-header bg-success">
+                <h4 class="my-0 font-weight-normal text-center">Production</h4>
+              </div>
+              <div class="card-body">
+                <h5 class="card-title text-center">The real network</h5>
+
+                <p>Production release are used for server ready to serve the real grid. This release is the
+                most stable and optimized version we have.</p>
+
+                <p>This release is the only one you can use if you want to host real workflow.</p>
+              </div>
+              <div class="card-footer bg-white">
+                <button type="button" class="btn btn-lg btn-block btn-success" onclick="setmode('prod');">Go live</button>
+              </div>
+            </div>
+            <div class="card mb-4 shadow-sm border-warning tf-card" id="tf-runmode-test">
+              <div class="card-header bg-warning">
+                <h4 class="my-0 font-weight-normal text-center">Testing</h4>
+              </div>
+              <div class="card-body">
+                <h5 class="card-title text-center">Make it bulletproof</h5>
+
+                <p>Before sending release over the real world, we want to ensure everything is bulletproof,
+                rock solid and tested a lot. Any release we made before goign in production, goes into this
+                testing release and use the same settings than production, but on a separate network to
+                not interfer with the real world.</p>
+
+                <p>Theses release are made for people who want to test the
+                system and help the community to improve the system.</p>
+              </div>
+              <div class="card-footer bg-white">
+                <button type="button" class="btn btn-lg btn-block btn-outline-warning" onclick="setmode('test');">Let's test</button>
+              </div>
+            </div>
+            <div class="card mb-4 shadow-sm border-danger tf-card" id="tf-runmode-dev">
+              <div class="card-header bg-danger">
+                <h4 class="my-0 font-weight-normal text-center">Development</h4>
+              </div>
+              <div class="card-body">
+                <h5 class="card-title text-center">Crashtest</h5>
+
+                <p>Our developers never stop to improve and add features to Zero-OS to make it even better.
+                As soon as something have to be tested, this is done in development mode. This mode is the most
+                unstable, but up-to-date, used to test and continuously develop the operating system.</p>
+
+                <p>You should use a development release only if you're developer or if someone told you
+                to use this for specific reasons.</p>
+              </div>
+              <div class="card-footer bg-white">
+                <button type="button" class="btn btn-lg btn-block btn-outline-danger" onclick="setmode('dev');">Get wild</button>
+              </div>
+            </div>
+          </div>
+
           </div>
         </div>
       </div>
 
       <div class="jumbotron jumbostep jumbostep4 jumbo-nok" id="jumbofinal">
         <div class="container">
-          <h1>Step 4: choose your image format</h1>
+          <h1 class="text-center">Choose your image format</h1>
 
           <table class="table table-hover table-summary">
+          <tr>
+            <td>
+                <h2>EFI</h2>
+            </td>
+            <td>
+                <p>Generate an EFI (UEFI) bootable image.</p>
+                <p class="text-success">This is the way to go if your machine is EFI enabled.</p>
+                <p>When you have downloaded this image, you need to place it on a <code>FAT</code> partition.
+                Name this file <code>BOOTX64.EFI</code> in the <code>EFI/BOOT</code> directory.</p>
+                <hr>
+                <div class="generated-code">
+                    <code id="url_uefi">...</code>
+                </div>
+            </td>
+            <td>
+                <a class="btn btn-success" href="#" role="button" onclick="return go('uefi');">EFI Kernel &raquo;</a>
+            </td>
+          </tr>
           <tr>
             <td>
                 <h2>iPXE</h2>
@@ -195,13 +187,12 @@
                 <p>Uses the generated URL as remote script or download it.</p>
                 </p>
                 <hr>
-                <span class="octicon octicon-chevron-right"></span>
                 <div class="generated-code">
                     <code id="url_ipxe">...</code>
                 </div>
             </td>
             <td>
-                <a class="btn btn-secondary" href="#" role="button" onclick="return go('ipxe');">iPXE Script &raquo;</a>
+                <a class="btn btn-primary" href="#" role="button" onclick="return go('ipxe');">iPXE Script &raquo;</a>
             </td>
           </tr>
           <tr>
@@ -212,7 +203,6 @@
                 <p>To use it in a Virtual Machine, choose this file as a CD-ROM image.</p>
                 </p>
                 <hr>
-                <span class="octicon octicon-chevron-right"></span>
                 <div class="generated-code">
                     <code id="url_iso">...</code>
                 </div>
@@ -227,11 +217,10 @@
             </td>
             <td>
                 <p>Generate an USB image which can be copied into a USB Flash Drive directly.</p>
-                <p>Warning: to use this image, you'll need to erase and overwrite the complete USB Flash Drive.</p>
+                <p class="text-danger">Warning: to use this image, you'll need to erase and overwrite the complete USB Flash Drive.</p>
                 <p>This image is a <code>'dd' able</code> image, it's made to be copy directly on your flash drive
                 and not be used as a file.</p>
                 <hr>
-                <span class="octicon octicon-chevron-right"></span>
                 <div class="generated-code">
                     <code id="url_usb">...</code>
                 </div>
@@ -240,26 +229,7 @@
                 <a class="btn btn-secondary" href="#" role="button" onclick="return go('usb');">USB Image &raquo;</a>
             </td>
           </tr>
-          <tr>
-            <td>
-                <h2>EFI</h2>
-            </td>
-            <td>
-                <p>Generate an EFI (UEFI) bootable image.</p>
-                <p><strong>This is the way to go if your machine is EFI enabled.</strong></p>
-                <p>When you have downloaded this image, you need to place it on a <code>FAT</code> partition.
-                Name this file <code>BOOTX64.EFI</code> in the <code>EFI/BOOT</code> directory.</p>
-                <hr>
-                <span class="octicon octicon-chevron-right"></span>
-                <div class="generated-code">
-                    <code id="url_uefi">...</code>
-                </div>
-            </td>
-            <td>
-                <a class="btn btn-secondary" href="#" role="button" onclick="return go('uefi');">EFI Kernel &raquo;</a>
-            </td>
-          </tr>
-          <tr>
+                    <tr>
             <td>
                 <h2>LKRN</h2>
             </td>
@@ -267,7 +237,6 @@
                 <p>Generate an LKRN bootable file.</p>
                 <p>This is more for advanced users. This file is a bootable kernel you can chain using GRUB or SYSLINUX.</p>
                 <hr>
-                <span class="octicon octicon-chevron-right"></span>
                 <div class="generated-code">
                     <code id="url_krn">...</code>
                 </div>
@@ -278,8 +247,6 @@
           </tr>
         </div>
       </div>
-
-
     </main>
   </body>
 </html>

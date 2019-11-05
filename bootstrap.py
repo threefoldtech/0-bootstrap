@@ -23,6 +23,12 @@ BASEPATH = os.path.join(thispath)
 app = Flask(__name__, static_url_path='/static')
 app.url_map.strict_slashes = False
 
+runmodes = {
+    "prod": "production",
+    "test": "testing",
+    "dev": "development"
+}
+
 #
 # Database
 #
@@ -53,16 +59,16 @@ def get_protocol():
 
     return 'https'
 
-def ipxe_script(branch, network, extra=""):
-    source = 'zero-os-%s.efi' % branch
+# Full cycle ipxe script
+def ipxe_script(release, farmer, extra=""):
+    source = 'zero-os-development-zos-v2-generic.efi'
     kernel = os.path.join(config['kernel-path'], source)
 
-    if not os.path.exists(kernel):
-        source = '%s.efi' % branch
-        kernel = os.path.join(config['kernel-path'], source)
+    if release not in ["prod", "test", "dev"]:
+        abort(401)
 
-        if not os.path.exists(kernel):
-            abort(404)
+    if not os.path.exists(kernel):
+        abort(404)
 
     kernel = "%s://%s/kernel/%s" % (get_protocol(), request.host, source)
 
@@ -81,16 +87,18 @@ def ipxe_script(branch, network, extra=""):
     script += "route\n"
     script += "echo \n\n"
 
-    script += "echo Version.....: %s\n" % branch
-    script += "echo Network ID..: %s\n" % network
+    script += "echo Release.....: %s\n" % runmodes[release]
+    script += "echo Farmer......: %s\n" % farmer
     script += "echo Parameters..: %s\n" % extra
     script += "echo \n\n"
 
     script += "echo Downloading Zero-OS image...\n"
     script += "chain %s" % kernel
 
-    if network and network != "null" and network != "0":
-        script += " zerotier=%s" % network
+    script += " runmode=%s" % release
+
+    if farmer:
+        script += " farmer_id=%s" % farmer
 
     if extra:
         script += " " + extra
@@ -101,16 +109,18 @@ def ipxe_script(branch, network, extra=""):
 
     return script
 
-def ipxe_quick_script(branch, network, extra=""):
-    source = 'zero-os-%s.efi' % branch
+# No network setup script
+# Used for provision clients which have already network setup
+# by provision image
+def ipxe_quick_script(release, farmer, extra=""):
+    source = 'zero-os-development-zos-v2-generic.efi' % "xxxx" # FIXME: hardcode url
     kernel = os.path.join(config['kernel-path'], source)
 
-    if not os.path.exists(kernel):
-        source = '%s.efi' % branch
-        kernel = os.path.join(config['kernel-path'], source)
+    if release not in ["prod", "test", "dev"]:
+        abort(401)
 
-        if not os.path.exists(kernel):
-            abort(404)
+    if not os.path.exists(kernel):
+        abort(404)
 
     kernel = "%s://%s/kernel/%s" % (get_protocol(), request.host, source)
 
@@ -122,16 +132,18 @@ def ipxe_quick_script(branch, network, extra=""):
     script += "echo ==================================\n"
 
     script += "echo \n\n"
-    script += "echo Version.....: %s\n" % branch
-    script += "echo Network ID..: %s\n" % network
+    script += "echo Release.....: %s\n" % runmodes[release]
     script += "echo Parameters..: %s\n" % extra
     script += "echo \n\n"
 
     script += "echo Downloading Zero-OS image...\n"
     script += "chain %s" % kernel
 
-    if network and network != "null" and network != "0":
-        script += " zerotier=%s" % network
+    script += " runmode=%s" % release
+
+    if farmer:
+        script += " farmer_id=%s" % farmer
+
 
     if extra:
         script += " " + extra
@@ -142,6 +154,7 @@ def ipxe_quick_script(branch, network, extra=""):
 
     return script
 
+# Provisioning image requesting configuration on runtime
 def ipxe_provision():
     script  = "#!ipxe\n"
     script += "echo =================================\n"
@@ -190,325 +203,209 @@ def download(filename):
     return send_from_directory(directory=config['kernel-path'], filename=filename)
 
 #
-# Image Generator
+# Generic Image Generator
 #
-@app.route('/iso/<branch>', methods=['GET'])
-def iso_branch(branch):
-    return iso_branch_network_extra(branch, "", "")
+def srcdir_from_filename(targetfile):
+    if targetfile == "ipxe.efi":
+       return config["ipxe-template-uefi"]
 
-@app.route('/iso/<branch>/<network>', methods=['GET'])
-def iso_branch_network(branch, network):
-    return iso_branch_network_extra(branch, network, "")
+    return config["ipxe-template"]
 
-@app.route('/iso/<branch>/<network>/<extra>', methods=['GET'])
-def iso_branch_network_extra(branch, network, extra):
-    print("[+] branch: %s, network: %s, extra: %s" % (branch, network, extra))
+def download_mkresponse(data, filename):
+    response = make_response(data)
+    response.headers["Content-Type"] = "application/octet-stream"
+    response.headers['Content-Disposition'] = "inline; filename=%s" % filename
 
+    return response
+
+def generic_image_generator(release, farmer, extra, buildscript, targetfile, filename):
     response = make_response("Request failed")
+    srcdir = srcdir_from_filename(targetfile)
 
     with tempfile.TemporaryDirectory() as tmpdir:
         src = os.path.join(tmpdir, "src")
 
-        print("[+] copying template: %s > %s" % (config['ipxe-template'], src))
-        call(["cp", "-ar", config['ipxe-template'], src])
+        print("[+] copying template: %s > %s" % (srcdir, src))
+        call(["cp", "-ar", srcdir, src])
 
         print("[+] creating ipxe script")
         with open(os.path.join(tmpdir, "boot.ipxe"), 'w') as f:
-            f.write(ipxe_script(branch, network, extra))
+            f.write(ipxe_script(release, farmer, extra))
 
-        print("[+] building iso")
-        script = os.path.join(BASEPATH, "scripts", "mkiso.sh")
+        print("[+] building: %s" % buildscript)
+        script = os.path.join(BASEPATH, "scripts", buildscript)
         call(["bash", script, tmpdir])
 
-        isocontents = ""
-        with open(os.path.join(tmpdir, "ipxe.iso"), 'rb') as f:
-            isocontents = f.read()
+        filecontents = ""
+        with open(os.path.join(tmpdir, targetfile), 'rb') as f:
+            filecontents = f.read()
 
-        response = make_response(isocontents)
-        response.headers["Content-Type"] = "application/octet-stream"
-        response.headers['Content-Disposition'] = "inline; filename=ipxe-%s.iso" % branch
+        response = download_mkresponse(filecontents, filename)
 
     return response
 
-@app.route('/usb/<branch>', methods=['GET'])
-def usb_branch(branch):
-    return usb_branch_network_extra(branch, "", "")
-
-@app.route('/usb/<branch>/<network>', methods=['GET'])
-def usb_branch_network(branch, network):
-    return usb_branch_network_extra(branch, network, "")
-
-@app.route('/usb/<branch>/<network>/<extra>', methods=['GET'])
-def usb_branch_network_extra(branch, network, extra):
-    print("[+] branch: %s, network: %s, extra: %s" % (branch, network, extra))
-
+def generic_image_provision(buildscript, targetfile, filename):
     response = make_response("Request failed")
+    srcdir = srcdir_from_filename(targetfile)
 
     with tempfile.TemporaryDirectory() as tmpdir:
         src = os.path.join(tmpdir, "src")
 
-        print("[+] copying template: %s > %s" % (config['ipxe-template'], src))
-        call(["cp", "-ar", config['ipxe-template'], src])
+        print("[+] copying template: %s > %s" % (srcdir, src))
+        call(["cp", "-ar", srcdir, src])
 
         print("[+] creating ipxe script")
         with open(os.path.join(tmpdir, "boot.ipxe"), 'w') as f:
-            f.write(ipxe_script(branch, network, extra))
+            f.write(ipxe_provision())
 
-        print("[+] building iso")
-        script = os.path.join(BASEPATH, "scripts", "mkusb.sh")
+        print("[+] building: %s" % buildscript)
+        script = os.path.join(BASEPATH, "scripts", buildscript)
         call(["bash", script, tmpdir])
 
-        isocontents = ""
-        with open(os.path.join(tmpdir, "ipxe.usb"), 'rb') as f:
-            isocontents = f.read()
+        filecontents = ""
+        with open(os.path.join(tmpdir, targetfile), 'rb') as f:
+            filecontents = f.read()
 
-        response = make_response(isocontents)
-        response.headers["Content-Type"] = "application/octet-stream"
-        response.headers['Content-Disposition'] = "inline; filename=ipxe-%s.img" % branch
+        response = download_mkresponse(filecontents, filename)
 
     return response
+
+def generic_image_quickipxe(release, farmer, extra, buildscript, targetfile, filename):
+    response = make_response("Request failed")
+    srcdir = srcdir_from_filename(targetfile)
+
+    with tempfile.TemporaryDirectory() as tmpdir:
+        src = os.path.join(tmpdir, "src")
+
+        print("[+] copying template: %s > %s" % (srcdir, src))
+        call(["cp", "-ar", srcdir, src])
+
+        print("[+] creating ipxe script")
+        with open(os.path.join(tmpdir, "boot.ipxe"), 'w') as f:
+            f.write(ipxe_script(release, farmer, extra))
+
+        print("[+] building: " % buildscript)
+        script = os.path.join(BASEPATH, "scripts", buildscript)
+        call(["bash", script, tmpdir])
+
+        filecontents = ""
+        with open(os.path.join(tmpdir, targetfile), 'rb') as f:
+            filecontents = f.read()
+
+        response = download_mkresponse(filecontents, filename)
+
+    return response
+
+
+
+
+#
+# Target Image Generator
+#
+@app.route('/iso/<release>', methods=['GET'])
+def iso_release(release):
+    return iso_release_farmer_extra(release, "", "")
+
+@app.route('/iso/<release>/<farmer>', methods=['GET'])
+def iso_release_farmer(release, farmer):
+    return iso_release_farmer_extra(release, farmer, "")
+
+@app.route('/iso/<release>/<farmer>/<extra>', methods=['GET'])
+def iso_release_farmer_extra(release, farmer, extra):
+    print("[+] release: %s, network: %s, extra: %s" % (release, farmer, extra))
+    return generic_image_generator(release, farmer, extra, "mkiso.sh", "ipxe.iso", "ipxe-%s.iso" % release)
+
+@app.route('/usb/<release>', methods=['GET'])
+def usb_release(release):
+    return usb_release_farmer_extra(release, "", "")
+
+@app.route('/usb/<release>/<farmer>', methods=['GET'])
+def usb_release_farmer(release, farmer):
+    return usb_release_farmer_extra(release, farmer, "")
+
+@app.route('/usb/<release>/<farmer>/<extra>', methods=['GET'])
+def usb_release_farmer_extra(release, farmer, extra):
+    print("[+] release: %s, network: %s, extra: %s" % (release, farmer, extra))
+    return generic_image_generator(release, farmer, extra, "mkusb.sh", "ipxe.usb", "ipxe-%s.img" % release)
+
 
 @app.route('/krn-generic', methods=['GET'])
 def krn_generic():
     print("[+] generic ipxe kernel")
-
-    response = make_response("Request failed")
-
-    with tempfile.TemporaryDirectory() as tmpdir:
-        src = os.path.join(tmpdir, "src")
-
-        print("[+] copying template: %s > %s" % (config['ipxe-template'], src))
-        call(["cp", "-ar", config['ipxe-template'], src])
-
-        print("[+] building kernel")
-        script = os.path.join(BASEPATH, "scripts", "mkkrn-generic.sh")
-        call(["bash", script, tmpdir])
-
-        isocontents = ""
-        with open(os.path.join(tmpdir, "ipxe.lkrn"), 'rb') as f:
-            isocontents = f.read()
-
-        response = make_response(isocontents)
-        response.headers["Content-Type"] = "application/octet-stream"
-        response.headers['Content-Disposition'] = "inline; filename=ipxe-zero-os-generic.lkrn"
-
-    return response
-
-@app.route('/krn-provision', methods=['GET'])
-def krn_provision():
-    print("[+] provision ipxe kernel")
-
-    response = make_response("Request failed")
-
-    with tempfile.TemporaryDirectory() as tmpdir:
-        src = os.path.join(tmpdir, "src")
-
-        print("[+] copying template: %s > %s" % (config['ipxe-template'], src))
-        call(["cp", "-ar", config['ipxe-template'], src])
-
-        print("[+] creating ipxe script")
-        with open(os.path.join(tmpdir, "boot.ipxe"), 'w') as f:
-            f.write(ipxe_provision())
-
-        print("[+] building kernel")
-        script = os.path.join(BASEPATH, "scripts", "mkkrn.sh")
-        call(["bash", script, tmpdir])
-
-        isocontents = ""
-        with open(os.path.join(tmpdir, "ipxe.lkrn"), 'rb') as f:
-            isocontents = f.read()
-
-        response = make_response(isocontents)
-        response.headers["Content-Type"] = "application/octet-stream"
-        response.headers['Content-Disposition'] = "inline; filename=ipxe-zero-os-provision.lkrn"
-
-    return response
-
+    return generic_image_provision("mkkrn-generic.sh", "ipxe.lkrn", "ipxe-zero-os-generic.lkrn")
 
 @app.route('/uefi-generic', methods=['GET'])
 def uefi_generic():
     print("[+] generic uefi ipxe")
+    return generic_image_provision("mkuefi-generic.sh", "ipxe.efi", "ipxe-zero-os-generic.efi")
 
-    response = make_response("Request failed")
 
-    with tempfile.TemporaryDirectory() as tmpdir:
-        src = os.path.join(tmpdir, "src")
-
-        print("[+] copying template: %s > %s" % (config['ipxe-template-uefi'], src))
-        call(["cp", "-ar", config['ipxe-template-uefi'], src])
-
-        print("[+] building kernel")
-        script = os.path.join(BASEPATH, "scripts", "mkuefi-generic.sh")
-        call(["bash", script, tmpdir])
-
-        isocontents = ""
-        with open(os.path.join(tmpdir, "ipxe.efi"), 'rb') as f:
-            isocontents = f.read()
-
-        response = make_response(isocontents)
-        response.headers["Content-Type"] = "application/octet-stream"
-        response.headers['Content-Disposition'] = "inline; filename=ipxe-zero-os-generic.efi"
-
-    return response
+@app.route('/krn-provision', methods=['GET'])
+def krn_provision():
+    print("[+] provision ipxe kernel")
+    return generic_image_quickipxe("mkkrn.sh", "ipxe.lkrn", "ipxe-zero-os-provision.lkrn")
 
 @app.route('/uefi-provision', methods=['GET'])
 def uefi_provision():
     print("[+] provisioning uefi ipxe")
-
-    response = make_response("Request failed")
-
-    with tempfile.TemporaryDirectory() as tmpdir:
-        src = os.path.join(tmpdir, "src")
-
-        print("[+] copying template: %s > %s" % (config['ipxe-template-uefi'], src))
-        call(["cp", "-ar", config['ipxe-template-uefi'], src])
-
-        print("[+] creating ipxe script")
-        with open(os.path.join(tmpdir, "boot.ipxe"), 'w') as f:
-            f.write(ipxe_provision())
-
-        print("[+] building kernel")
-        script = os.path.join(BASEPATH, "scripts", "mkuefi.sh")
-        call(["bash", script, tmpdir])
-
-        isocontents = ""
-        with open(os.path.join(tmpdir, "ipxe.efi"), 'rb') as f:
-            isocontents = f.read()
-
-        response = make_response(isocontents)
-        response.headers["Content-Type"] = "application/octet-stream"
-        response.headers['Content-Disposition'] = "inline; filename=ipxe-zero-os-provision.efi"
-
-    return response
+    return generic_image_quickipxe("mkuefi.sh", "ipxe.efi", "ipxe-zero-os-provision.efi")
 
 
-@app.route('/krn/<branch>', methods=['GET'])
-def krn_branch(branch):
-    return krn_branch_network_extra(branch, "", "")
+@app.route('/krn/<release>', methods=['GET'])
+def krn_release(release):
+    return krn_release_farmer_extra(release, "", "")
 
-@app.route('/krn/<branch>/<network>', methods=['GET'])
-def krn_branch_network(branch, network):
-    return krn_branch_network_extra(branch, network, "")
+@app.route('/krn/<release>/<farmer>', methods=['GET'])
+def krn_release_farmer(release, farmer):
+    return krn_release_farmer_extra(release, farmer, "")
 
-@app.route('/krn/<branch>/<network>/<extra>', methods=['GET'])
-def krn_branch_network_extra(branch, network, extra):
-    print("[+] branch: %s, network: %s, extra: %s" % (branch, network, extra))
-
-    response = make_response("Request failed")
-
-    with tempfile.TemporaryDirectory() as tmpdir:
-        src = os.path.join(tmpdir, "src")
-
-        print("[+] copying template: %s > %s" % (config['ipxe-template'], src))
-        call(["cp", "-ar", config['ipxe-template'], src])
-
-        print("[+] creating ipxe script")
-        with open(os.path.join(tmpdir, "boot.ipxe"), 'w') as f:
-            f.write(ipxe_script(branch, network, extra))
-
-        print("[+] building iso")
-        script = os.path.join(BASEPATH, "scripts", "mkkrn.sh")
-        call(["bash", script, tmpdir])
-
-        isocontents = ""
-        with open(os.path.join(tmpdir, "ipxe.lkrn"), 'rb') as f:
-            isocontents = f.read()
-
-        response = make_response(isocontents)
-        response.headers["Content-Type"] = "application/octet-stream"
-        response.headers['Content-Disposition'] = "inline; filename=ipxe-%s.lkrn" % branch
-
-    return response
-
-@app.route('/uefi/<branch>', methods=['GET'])
-def uefi_branch(branch):
-    return uefi_branch_network_extra(branch, "", "")
-
-@app.route('/uefi/<branch>/<network>', methods=['GET'])
-def uefi_branch_network(branch, network):
-    return uefi_branch_network_extra(branch, network, "")
-
-@app.route('/uefi/<branch>/<network>/<extra>', methods=['GET'])
-def uefi_branch_network_extra(branch, network, extra):
-    print("[+] branch: %s, network: %s, extra: %s" % (branch, network, extra))
-
-    response = make_response("Request failed")
-
-    with tempfile.TemporaryDirectory() as tmpdir:
-        src = os.path.join(tmpdir, "src")
-
-        print("[+] copying template: %s > %s" % (config['ipxe-template-uefi'], src))
-        call(["cp", "-ar", config['ipxe-template-uefi'], src])
-
-        print("[+] creating ipxe script")
-        with open(os.path.join(tmpdir, "boot.ipxe"), 'w') as f:
-            f.write(ipxe_script(branch, network, extra))
-
-        print("[+] building iso")
-        script = os.path.join(BASEPATH, "scripts", "mkuefi.sh")
-        call(["bash", script, tmpdir])
-
-        isocontents = ""
-        with open(os.path.join(tmpdir, "ipxe.efi"), 'rb') as f:
-            isocontents = f.read()
-
-        response = make_response(isocontents)
-        response.headers["Content-Type"] = "application/octet-stream"
-        response.headers['Content-Disposition'] = "inline; filename=ipxe-%s.efi" % branch
-
-    return response
-
-@app.route('/uefimg/<branch>', methods=['GET'])
-def uefimg_branch(branch):
-    return uefimg_branch_network_extra(branch, "", "")
-
-@app.route('/uefimg/<branch>/<network>', methods=['GET'])
-def uefimg_branch_network(branch, network):
-    return uefimg_branch_network_extra(branch, network, "")
-
-@app.route('/uefimg/<branch>/<network>/<extra>', methods=['GET'])
-def uefimg_branch_network_extra(branch, network, extra):
-    print("[+] branch: %s, network: %s, extra: %s" % (branch, network, extra))
-
-    response = make_response("Request failed")
-
-    with tempfile.TemporaryDirectory() as tmpdir:
-        src = os.path.join(tmpdir, "src")
-
-        print("[+] copying template: %s > %s" % (config['ipxe-template-uefi'], src))
-        call(["cp", "-ar", config['ipxe-template-uefi'], src])
-
-        print("[+] creating ipxe script")
-        with open(os.path.join(tmpdir, "boot.ipxe"), 'w') as f:
-            f.write(ipxe_script(branch, network, extra))
-
-        print("[+] building USB image")
-        script = os.path.join(BASEPATH, "scripts", "mkuefimg.sh")
-        call(["bash", script, tmpdir])
-
-        isocontents = ""
-        with open(os.path.join(tmpdir, "uefimg.img"), 'rb') as f:
-            isocontents = f.read()
-
-        response = make_response(isocontents)
-        response.headers["Content-Type"] = "application/octet-stream"
-        response.headers['Content-Disposition'] = "inline; filename=uefiusb-%s.img" % branch
-
-    return response
+@app.route('/krn/<release>/<farmer>/<extra>', methods=['GET'])
+def krn_release_farmer_extra(release, farmer, extra):
+    print("[+] release: %s, network: %s, extra: %s" % (release, farmer, extra))
+    return generic_image_generator(release, farmer, extra, "mkkrn.sh", "ipxe.lkrn", "ipxe-%s.lkrn" % release)
 
 
-@app.route('/ipxe/<branch>', methods=['GET'])
-def ipxe_branch(branch):
-    return ipxe_branch_network_extra(branch, "", "")
+@app.route('/uefi/<release>', methods=['GET'])
+def uefi_release(release):
+    return uefi_release_farmer_extra(release, "", "")
 
-@app.route('/ipxe/<branch>/<network>', methods=['GET'])
-def ipxe_branch_network(branch, network):
-    return ipxe_branch_network_extra(branch, network, "")
+@app.route('/uefi/<release>/<farmer>', methods=['GET'])
+def uefi_release_farmer(release, farmer):
+    return uefi_release_farmer_extra(release, farmer, "")
 
-@app.route('/ipxe/<branch>/<network>/<extra>', methods=['GET'])
-def ipxe_branch_network_extra(branch, network, extra):
-    print("[+] branch: %s, network: %s, extra: %s" % (branch, network, extra))
-    return text_reply(ipxe_script(branch, network, extra))
+@app.route('/uefi/<release>/<farmer>/<extra>', methods=['GET'])
+def uefi_release_farmer_extra(release, farmer, extra):
+    print("[+] release: %s, network: %s, extra: %s" % (release, farmer, extra))
+    return generic_image_generator(release, farmer, extra, "mkuefi.sh", "ipxe.efi", "ipxe-%s.efi" % release)
+
+
+@app.route('/uefimg/<release>', methods=['GET'])
+def uefimg_release(release):
+    return uefimg_release_farmer_extra(release, "", "")
+
+@app.route('/uefimg/<release>/<farmer>', methods=['GET'])
+def uefimg_release_farmer(release, farmer):
+    return uefimg_release_farmer_extra(release, farmer, "")
+
+@app.route('/uefimg/<release>/<farmer>/<extra>', methods=['GET'])
+def uefimg_release_farmer_extra(release, farmer, extra):
+    print("[+] release: %s, network: %s, extra: %s" % (release, farmer, extra))
+    return generic_image_generator(release, farmer, extra, "mkuefimg.sh", "uefimg.img", "uefiusb-%s.img" % release)
+
+
+@app.route('/ipxe/<release>', methods=['GET'])
+def ipxe_release(release):
+    return ipxe_release_farmer_extra(release, "", "")
+
+@app.route('/ipxe/<release>/<farmer>', methods=['GET'])
+def ipxe_release_farmer(release, farmer):
+    return ipxe_release_farmer_extra(release, farmer, "")
+
+@app.route('/ipxe/<release>/<farmer>/<extra>', methods=['GET'])
+def ipxe_release_farmer_extra(release, farmer, extra):
+    print("[+] release: %s, network: %s, extra: %s" % (release, farmer, extra))
+    return text_reply(ipxe_script(release, farmer, extra))
+
 
 @app.route('/provision/<client>')
 def provision_client(client):
@@ -518,7 +415,7 @@ def provision_client(client):
     t = (client,)
     c = db.cursor()
 
-    c.execute('SELECT client, branch, zerotier, kargs FROM provision WHERE client = ?', t)
+    c.execute('SELECT client, release, zerotier, kargs FROM provision WHERE client = ?', t)
     data = c.fetchone()
     db.close()
 
@@ -531,73 +428,13 @@ def provision_client(client):
 #
 # Helpers
 #
-def branches_list():
-    branches = []
-    target = os.listdir(config['kernel-path'])
-    ordered = {}
-
-    for filename in target:
-        endpoint = os.path.join(config['kernel-path'], filename)
-        stat = os.stat(endpoint, follow_symlinks=False)
-
-        if not S_ISLNK(stat.st_mode):
-            continue
-
-        ordered[endpoint] = stat.st_mtime
-
-    starget = sorted(ordered.items(), key=operator.itemgetter(1))
-    starget.reverse()
-
-    for endpoint in starget:
-        fullpath = endpoint[0]
-        updated = datetime.datetime.utcfromtimestamp(endpoint[1]).strftime('%Y-%m-%d, %H:%M:%S (UTC)')
-
-        filename = os.path.basename(fullpath)
-        link = os.readlink(fullpath)
-
-        branch = filename[:-4]
-        if branch.startswith("zero-os"):
-            branch = branch[8:]
-
-        branches.append({
-            'name': filename,
-            'branch': branch,
-            'target': link,
-            'updated': updated,
-        })
-
-    return branches
-
 #
 # Web Frontend Routing
 #
 @app.route('/', methods=['GET'])
 def homepage():
-    content = {
-        'links': [],
-    }
-
-    for popular in config['popular']:
-        filename = "zero-os-%s.efi" % popular
-        endpoint = os.path.join(config['kernel-path'], filename)
-
-        content['links'].append({
-            'name': filename,
-            'branch': popular,
-            'target': os.readlink(endpoint),
-            'info': config['popular-description'][popular]
-        })
-
-
-    return render_template("home.html", **content)
-
-@app.route('/branches', methods=['GET'])
-def branches():
-    content = {
-        'links': branches_list(),
-    }
-
-    return render_template("branches.html", **content)
+    content = {}
+    return render_template("generate.html", **content)
 
 @app.route('/images', methods=['GET'])
 def kernels():
@@ -635,29 +472,8 @@ def kernels():
     return render_template("kernels.html", **content)
 
 @app.route('/generate', methods=['GET'])
-def generate():
-    sources = []
-
-    for popular in config['popular']:
-        sources.append({'branch': popular})
-
-    sources.append({'branch': '----'})
-    sources += branches_list()
-
-    content = {
-        'basebranch': '',
-        'branches': sources,
-        'baseurl': config['base-host'],
-    }
-
-    return render_template("generate.html", **content)
-
-@app.route('/generate/<base>', methods=['GET'])
-def generate_based(base):
-    content = {
-        'basebranch': base,
-        'baseurl': config['base-host'],
-    }
+def generate_v2():
+    content = {}
     return render_template("generate.html", **content)
 
 
@@ -686,13 +502,13 @@ def kernel_list():
     for file in starget:
         file = file[0]
         if S_ISLNK(stats[file].st_mode):
-            branch = file[:-4]
-            if branch.startswith("zero-os"):
-                branch = branch[8:]
+            release = file[:-4]
+            if release.startswith("zero-os"):
+                release = release[8:]
 
             content['links'].append({
                 'name': file,
-                'branch': branch,
+                'release': release,
                 'target': os.readlink(os.path.join(config['kernel-path'], file))
             })
 
