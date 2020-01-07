@@ -89,12 +89,14 @@ def ipxe_script(branch, network, extra=""):
     script += "set idx:int32 0\n\n"
 
     script += ":loop_iface isset ${net${idx}/mac} || goto failed\n"
-    script += "echo net${idx}: ${net${idx}/chip} -- ${net${idx}/mac}\n"
+    script += "echo Interface: net${idx}, chipset: ${net${idx}/chip}\n"
     script += "ifconf --configurator dhcp net${idx} || goto loop_next_iface\n"
     script += "echo \n"
+    script += "echo ----\n"
     script += "isset ${net${idx}/ip} && echo net${idx}/ip: ${net${idx}/ip} || goto loop_next_iface\n"
     script += "isset ${net${idx}/dns} && echo net${idx}/dns: ${net${idx}/dns} || goto loop_next_iface\n"
-    script += "route\n"
+    script += "isset ${net${idx}/gateway} && echo net${idx}/gateway: ${net${idx}/gateway} || goto loop_next_iface\n"
+    script += "echo ----\n"
     script += "echo \n"
     script += "goto loop_done\n\n"
 
