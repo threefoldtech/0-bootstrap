@@ -97,7 +97,7 @@ def ipxe_script(branch, network, extra=""):
     script += "echo Synchronizing time\n"
     script += "ntp pool.ntp.org || \n\n"
 
-        script += "echo Downloading Zero-OS image...\n"
+    script += "echo Downloading Zero-OS image...\n"
     script += "chain %s" % kernel
 
     if network and network != "null" and network != "0":
