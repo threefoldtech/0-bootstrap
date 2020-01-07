@@ -79,10 +79,14 @@ def ipxe_script(branch, network, extra=""):
     script += "echo == Zero-OS Kernel Boot Loader ==\n"
     script += "echo ================================\n"
     script += "echo \n\n"
+
+    script += "echo Version.....: %s\n" % branch
+    script += "echo Network ID..: %s\n" % network
+    script += "echo Parameters..: %s\n" % extra
+    script += "echo \n\n"
+
     script += "echo Initializing network\n"
     script += "dhcp || goto failed\n\n"
-    script += "echo Synchronizing time\n"
-    script += "ntp pool.ntp.org || \n\n"
 
     script += "echo \n"
     script += "show dns\n"
@@ -90,12 +94,10 @@ def ipxe_script(branch, network, extra=""):
     script += "route\n"
     script += "echo \n\n"
 
-    script += "echo Version.....: %s\n" % branch
-    script += "echo Network ID..: %s\n" % network
-    script += "echo Parameters..: %s\n" % extra
-    script += "echo \n\n"
+    script += "echo Synchronizing time\n"
+    script += "ntp pool.ntp.org || \n\n"
 
-    script += "echo Downloading Zero-OS image...\n"
+        script += "echo Downloading Zero-OS image...\n"
     script += "chain %s" % kernel
 
     if network and network != "null" and network != "0":
@@ -106,6 +108,7 @@ def ipxe_script(branch, network, extra=""):
 
     script += " ||\n"
     script += "\n:failed\n"
+    script += "echo Initialization failed, rebooting in 10 seconds.\n"
     script += "sleep 10"
 
     return script
