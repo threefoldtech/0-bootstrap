@@ -86,13 +86,22 @@ def ipxe_script(branch, network, extra=""):
     script += "echo \n\n"
 
     script += "echo Initializing network\n"
-    script += "dhcp || goto failed\n\n"
+    script += "set idx:int32 0\n\n"
 
+    script += ":loop_iface isset ${net${idx}/mac} || goto failed\n"
+    script += "echo net${idx}: ${net${idx}/chip} -- ${net${idx}/mac}\n"
+    script += "ifconf --configurator dhcp net${idx} || goto loop_next_iface\n"
     script += "echo \n"
-    script += "show dns\n"
-    script += "show ip\n"
+    script += "isset ${net${idx}/ip} && echo net${idx}/ip: ${net${idx}/ip} || goto loop_next_iface\n"
+    script += "isset ${net${idx}/dns} && echo net${idx}/dns: ${net${idx}/dns} || goto loop_next_iface\n"
     script += "route\n"
-    script += "echo \n\n"
+    script += "echo \n"
+    script += "goto loop_done\n\n"
+
+    script += ":loop_next_iface\n"
+    script += "inc idx && goto loop_iface\n\n"
+
+    script += ":loop_done\n"
 
     script += "echo Synchronizing time\n"
     script += "ntp pool.ntp.org || \n\n"
