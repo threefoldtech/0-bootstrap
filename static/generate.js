@@ -114,4 +114,5 @@ function setmode(mode) {
     $('#tf-runmode-' + mode + ' button').addClass("btn-" + tfmodes[mode]);
 
     tfmode = mode;
+    update_url();
 }
