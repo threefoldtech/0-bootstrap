@@ -77,20 +77,32 @@ def ipxe_script(release, farmer, extra=""):
     script += "echo == Zero-OS Kernel Boot Loader ==\n"
     script += "echo ================================\n"
     script += "echo \n\n"
-    script += "echo Initializing network\n"
-    script += "dhcp || goto failed\n\n"
-    script += "echo Synchronizing time\n"
-    script += "ntp pool.ntp.org || \n\n"
-
-    script += "echo \n"
-    script += "show ip\n"
-    script += "route\n"
-    script += "echo \n\n"
 
     script += "echo Release.....: %s\n" % runmodes[release]
     script += "echo Farmer......: %s\n" % farmer
     script += "echo Parameters..: %s\n" % extra
     script += "echo \n\n"
+
+    script += "echo Initializing network\n"
+    script += "set idx:int32 0\n\n"
+
+    script += ":loop_iface isset ${net${idx}/mac} || goto failed\n"
+    script += "echo Interface: net${idx}, chipset: ${net${idx}/chip}\n"
+    script += "ifconf --configurator dhcp net${idx} || goto loop_next_iface\n"
+    script += "echo \n"
+    script += "isset ${net${idx}/ip} && echo net${idx}/ip: ${net${idx}/ip} || goto loop_next_iface\n"
+    script += "isset ${net${idx}/dns} && echo net${idx}/dns: ${net${idx}/dns} || goto loop_next_iface\n"
+    script += "isset ${net${idx}/gateway} && echo net${idx}/gateway: ${net${idx}/gateway} || goto loop_next_iface\n"
+    script += "echo \n"
+    script += "goto loop_done\n\n"
+
+    script += ":loop_next_iface\n"
+    script += "inc idx && goto loop_iface\n\n"
+
+    script += ":loop_done\n"
+
+    script += "echo Synchronizing time\n"
+    script += "ntp pool.ntp.org || \n\n"
 
     script += "echo Downloading Zero-OS image...\n"
     script += "chain %s" % kernel
@@ -105,6 +117,7 @@ def ipxe_script(release, farmer, extra=""):
 
     script += " ||\n"
     script += "\n:failed\n"
+    script += "echo Initialization failed, rebooting in 10 seconds.\n"
     script += "sleep 10"
 
     return script
