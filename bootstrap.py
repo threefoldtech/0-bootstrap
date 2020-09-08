@@ -219,7 +219,8 @@ def download(filename):
 # Generic Image Generator
 #
 def srcdir_from_filename(targetfile):
-    if targetfile == "ipxe.efi":
+    efi = ["ipxe.efi", "uefimg.img"]
+    if targetfile in efi:
        return config["ipxe-template-uefi"]
 
     return config["ipxe-template"]
