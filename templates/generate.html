@@ -162,11 +162,36 @@
           <table class="table table-hover table-summary">
           <tr>
             <td>
-                <h2>EFI</h2>
+                <h2>EFI USB</h2>
+            </td>
+            <td>
+                <p>Generate an USB image with EFI (UEFI) bootable kernel.</p>
+                <p class="text-success">This is the easiest way to go if your machine is EFI enabled.
+                Any recent computer should support this out-of-box.</p>
+                <p class="text-danger">To use this image, you'll need to erase and overwrite the complete USB Flash Drive.</p>
+
+                <p>This image is a <code>'dd' able</code> image, it's made to be copy directly on your flash drive
+                and not be used as a file.</p>
+                <hr>
+                <div class="generated-code">
+                    <code id="url_uefimg">...</code>
+                </div>
+            </td>
+            <td>
+                <a class="btn btn-success" href="#" role="button" onclick="return go('uefimg');">USB Image &raquo;</a>
+            </td>
+          </tr>
+
+          <tr>
+            <td>
+                <h2>EFI IMG</h2>
             </td>
             <td>
                 <p>Generate an EFI (UEFI) bootable image.</p>
-                <p class="text-success">This is the way to go if your machine is EFI enabled.</p>
+                <p class="text-success">This is the way to go if your machine is EFI enabled.
+                Any recent computer should support this out-of-box.</p>
+                <p class="text-warning">This method requires extra step compared to EFI USB, but it's more flexible.</p>
+
                 <p>When you have downloaded this image, you need to place it on a <code>FAT</code> partition.
                 Name this file <code>BOOTX64.EFI</code> in the <code>EFI/BOOT</code> directory.</p>
                 <hr>
@@ -219,6 +244,7 @@
             </td>
             <td>
                 <p>Generate an USB image which can be copied into a USB Flash Drive directly.</p>
+                <p class="text-danger">This image won't work on recent computer, please use EFI USB instead.</p>
                 <p class="text-danger">Warning: to use this image, you'll need to erase and overwrite the complete USB Flash Drive.</p>
                 <p>This image is a <code>'dd' able</code> image, it's made to be copy directly on your flash drive
                 and not be used as a file.</p>

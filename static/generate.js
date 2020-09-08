@@ -2,7 +2,7 @@ var allValid = false;
 var allValidReason = '';
 
 var jwtkargs = null;
-var buildlist = ['ipxe', 'iso', 'usb', 'uefi', 'krn'];
+var buildlist = ['ipxe', 'iso', 'usb', 'uefi', 'uefimg', 'krn'];
 var finalUrl = '...';
 
 var tfmodes = {"prod": "success", "test": "warning", "dev": "danger"};
