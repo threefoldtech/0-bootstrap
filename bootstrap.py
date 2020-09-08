@@ -537,5 +537,47 @@ def kernel_list():
 
     return render_template("kernel.html", **content)
 
+@app.route('/api/kernel', methods=['POST'])
+def api_kernel():
+    if not request.cookies.get("token"):
+        return {'status': 'error', 'message': 'token not found'}
+
+    if request.cookies.get("token") != config['api-token']:
+        return {'status': 'error', 'message': 'invalid token'}
+
+    if 'kernel' not in request.files:
+        return {'status': 'error', 'message': 'no file found'}
+
+    file = request.files['kernel']
+
+    if file.filename == '':
+        return {'status': 'error', 'message': 'no file selected'}
+
+    source = os.path.join(config['kernel-path'], file.filename)
+    print(source)
+
+    file.save(source)
+
+    return {'status': 'success'}
+
+@app.route('/api/symlink/<linkname>/<target>')
+def api_symlink(linkname, target):
+    if not request.cookies.get("token"):
+        return {'status': 'error', 'message': 'token not found'}
+
+    if request.cookies.get("token") != config['api-token']:
+        return {'status': 'error', 'message': 'invalid token'}
+
+    check = os.path.join(config['kernel-path'], linkname)
+    if os.path.islink(check) or os.path.isfile(check):
+        os.remove(check)
+
+    now = os.getcwd()
+    os.chdir(config['kernel-path'])
+    os.symlink(target, linkname)
+    os.chdir(now)
+
+    return {'status': 'success'}
+
 print("[+] listening")
 app.run(host="0.0.0.0", port=config['http-port'], debug=config['debug'], threaded=True)

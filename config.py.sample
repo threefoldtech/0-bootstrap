@@ -19,6 +19,9 @@ config = {
         'development': 'Staging version',
     },
 
+    # bootstrap api token
+    'api-token': 'change-me-unique-token',
+
     # sqlite3 database used for provisioning
     'bootstrap-db': 'db/bootstrap.sqlite3',
 }
