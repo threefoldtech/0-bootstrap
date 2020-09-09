@@ -1,34 +1,37 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="description" content="Zero-OS Bootstrap">
-    <meta name="author" content="ThreeFold Tech">
 
-    <title>Zero-OS Bootstrap Image Generator</title>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="Zero-OS Bootstrap">
+  <meta name="author" content="ThreeFold Tech">
 
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/octicons/4.4.0/font/octicons.css">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Quicksand|Roboto:300&display=swap">
-    <link rel="stylesheet" href="/static/bootstrap.css">
+  <title>Zero-OS Bootstrap Image Generator</title>
 
-    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"></script>
-    <script type="text/javascript">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css"
+    integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/octicons/4.4.0/font/octicons.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Quicksand|Roboto:300&display=swap">
+  <link rel="stylesheet" href="/static/bootstrap.css">
+
+  <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"></script>
+  <script type="text/javascript">
     var baseurl = "{{ baseurl }}";
-    $(document).ready(function() {
-        $("#farmerid").focus();
-        update_trigger();
+    $(document).ready(function () {
+      $("#farmerid").focus();
+      update_trigger();
     });
-    </script>
-    <script src="/static/generate.js"></script>
-  </head>
+  </script>
+  <script src="/static/generate.js"></script>
+</head>
 
-  <body>
-    <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
-      <div class="container">
+<body>
+  <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+    <div class="container">
       <a class="navbar-brand" href="/">Zero-OS Bootstrap</a>
-      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsDefault" aria-controls="navbarsDefault" aria-expanded="false" aria-label="Toggle navigation">
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsDefault"
+        aria-controls="navbarsDefault" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
 
@@ -42,239 +45,247 @@
           </li>
         </ul>
       </div>
+    </div>
+  </nav>
+
+  <main role="main">
+    <div class="jumbotron">
+      <div class="container">
+        <h1 class="display-3">Zero-OS Bootstrapping</h1>
+        <p>
+          Welcome to the Zero-OS Boot Generator Assistant which will helps you to generate your own
+          boot device for your system. Please follow the next steps.
+
+          These steps will guide you to setup a boot device ready to use Zero-OS v2.
+        </p>
       </div>
-    </nav>
+    </div>
 
-    <main role="main">
-      <div class="jumbotron">
-        <div class="container">
-          <h1 class="display-3">Zero-OS Bootstrapping</h1>
-          <p>
-            Welcome to the Zero-OS Boot Generator Assistant which will helps you to generate your own
-            boot device for your system. Please follow the next steps.
-
-            Theses steps will guide you to setup a boot device ready to use Zero-OS v2.
-          </p>
-        </div>
-      </div>
-
-      <div class="jumbotron jumbostep">
-        <div class="container">
-          <h1 class="text-center">Who are you ?</h2>
+    <div class="jumbotron jumbostep">
+      <div class="container">
+        <h1 class="text-center">Who are you ?</h2>
 
           <p>In order to identify and link the operating system to your farm, you need to set your
-          Farmer ID on the system.<br>
-          <a href="https://wiki.grid.tf/#/tf_farming/v2_jsx_farmsetup" target="_blank">You can find more information here.</a></p>
+            Farmer ID on the system.<br>
+            <a href="https://wiki.grid.tf/#/tf_farming/v2_jsx_farmsetup" target="_blank">You can find more information
+              here.</a></p>
 
           <div class="alert alert-light boxfill" role="alert">
-          <form>
+            <form>
               <div class="form-group row">
                 <label for="kargs-farmer" class="col-sm-2 col-form-label">Farmer ID</label>
                 <div class="input-group col-sm-10">
-                    <input type="text" class="form-control" id="farmerid" placeholder="" onkeyup="update_trigger()">
-                    <div class="input-group-append">
-                        <span class="input-group-text font-weight-bold" id="farmerid-cleared">Please fill in</span>
-                    </div>
+                  <input type="text" class="form-control" id="farmerid" placeholder="" onkeyup="update_trigger()">
+                  <div class="input-group-append">
+                    <span class="input-group-text font-weight-bold" id="farmerid-cleared">Please fill in</span>
+                  </div>
                 </div>
               </div>
               <div class="form-group row">
-                 <div class="col-sm-2"></div>
-                 <div class="col-sm-10 tip">
-                 </div>
+                <div class="col-sm-2"></div>
+                <div class="col-sm-10 tip">
+                </div>
               </div>
-          </form>
+            </form>
           </div>
-        </div>
       </div>
+    </div>
 
-      <div class="jumbotron jumbostep">
-        <div class="container">
-          <h1 class="text-center">Which release do you want ?</h1>
+    <div class="jumbotron jumbostep">
+      <div class="container">
+        <h1 class="text-center">Which release do you want ?</h1>
 
-          <p>Zero-OS comes by default with 3 differents <code>running mode</code>. Each mode have their own settings,
+        <p>Zero-OS comes by default with 3 different <code>running modes</code>. Each mode has its own settings,
           own network and own purpose.<br>
           Please choose the release you want.</p>
 
-          <div class="card-deck mb-3">
-            <div class="card mb-4 shadow-sm border-success tf-card tf-card-selected" id="tf-runmode-prod">
-              <div class="card-header bg-success">
-                <h4 class="my-0 font-weight-normal text-center">Production</h4>
-              </div>
-              <div class="card-body">
-                <h5 class="card-title text-center">The real network</h5>
+        <div class="card-deck mb-3">
+          <div class="card mb-4 shadow-sm border-success tf-card tf-card-selected" id="tf-runmode-prod">
+            <div class="card-header bg-success">
+              <h4 class="my-0 font-weight-normal text-center">Production</h4>
+            </div>
+            <div class="card-body">
+              <h5 class="card-title text-center">The real network</h5>
 
-                <p>Production release are used for server ready to serve the real grid. This release is the
+              <p>Production releases are used for server ready to serve the real grid. This release is the
                 most stable and optimized version we have.</p>
 
-                <p>This release is the only one you can use if you want to host real workflow.</p>
-              </div>
-              <div class="card-footer bg-white">
-                <button type="button" class="btn btn-lg btn-block btn-success" onclick="setmode('prod');">Go live</button>
-              </div>
+              <p>This release is the only one you can use if you want to host real workflow.</p>
             </div>
-            <div class="card mb-4 shadow-sm border-warning tf-card" id="tf-runmode-test">
-              <div class="card-header bg-warning">
-                <h4 class="my-0 font-weight-normal text-center">Testing</h4>
-              </div>
-              <div class="card-body">
-                <h5 class="card-title text-center">Make it bulletproof</h5>
+            <div class="card-footer bg-white">
+              <button type="button" class="btn btn-lg btn-block btn-success" onclick="setmode('prod');">Go live</button>
+            </div>
+          </div>
+          <div class="card mb-4 shadow-sm border-warning tf-card" id="tf-runmode-test">
+            <div class="card-header bg-warning">
+              <h4 class="my-0 font-weight-normal text-center">Testing</h4>
+            </div>
+            <div class="card-body">
+              <h5 class="card-title text-center">Make it bulletproof</h5>
 
-                <p>Before sending release over the real world, we want to ensure everything is bulletproof,
-                rock solid and tested a lot. Any release we made before goign in production, goes into this
-                testing release and use the same settings than production, but on a separate network to
-                not interfer with the real world.</p>
+              <p>Before sending release over the real world, we want to ensure everything is bulletproof,
+                rock solid and tested a lot. Averyy release we make before going in production, goes into this
+                testing release and uses the same settings as production but on a separate network to
+                not interfere with the real world.</p>
 
-                <p>Theses release are made for people who want to test the
+              <p>These releases are made for people who want to test the
                 system and help the community to improve the system.</p>
-              </div>
-              <div class="card-footer bg-white">
-                <button type="button" class="btn btn-lg btn-block btn-outline-warning" onclick="setmode('test');">Let's test</button>
-              </div>
             </div>
-            <div class="card mb-4 shadow-sm border-danger tf-card" id="tf-runmode-dev">
-              <div class="card-header bg-danger">
-                <h4 class="my-0 font-weight-normal text-center">Development</h4>
-              </div>
-              <div class="card-body">
-                <h5 class="card-title text-center">Crashtest</h5>
+            <div class="card-footer bg-white">
+              <button type="button" class="btn btn-lg btn-block btn-outline-warning" onclick="setmode('test');">Let's
+                test</button>
+            </div>
+          </div>
+          <div class="card mb-4 shadow-sm border-danger tf-card" id="tf-runmode-dev">
+            <div class="card-header bg-danger">
+              <h4 class="my-0 font-weight-normal text-center">Development</h4>
+            </div>
+            <div class="card-body">
+              <h5 class="card-title text-center">Crashtest</h5>
 
-                <p>Our developers never stop to improve and add features to Zero-OS to make it even better.
-                As soon as something have to be tested, this is done in development mode. This mode is the most
+              <p>Our developers never stop to improve and add features to Zero-OS to make it even better.
+                As soon as something has to be tested, this is done in development mode. This mode is the most
                 unstable, but up-to-date, used to test and continuously develop the operating system.</p>
 
-                <p>You should use a development release only if you're developer or if someone told you
+              <p>You should use a development release only if you're developer or if someone told you
                 to use this for specific reasons.</p>
-              </div>
-              <div class="card-footer bg-white">
-                <button type="button" class="btn btn-lg btn-block btn-outline-danger" onclick="setmode('dev');">Get wild</button>
-              </div>
+            </div>
+            <div class="card-footer bg-white">
+              <button type="button" class="btn btn-lg btn-block btn-outline-danger" onclick="setmode('dev');">Get
+                wild</button>
             </div>
           </div>
-
-          </div>
         </div>
+
       </div>
+    </div>
+    </div>
 
-      <div class="jumbotron jumbostep jumbostep4 jumbo-nok" id="jumbofinal">
-        <div class="container">
-          <h1 class="text-center">Choose your image format</h1>
+    <div class="jumbotron jumbostep jumbostep4 jumbo-nok" id="jumbofinal">
+      <div class="container">
+        <h1 class="text-center">Choose your image format</h1>
 
-          <table class="table table-hover table-summary">
+        <table class="table table-hover table-summary">
           <tr>
             <td>
-                <h2>EFI USB</h2>
+              <h2>EFI USB</h2>
             </td>
             <td>
-                <p>Generate an USB image with EFI (UEFI) bootable kernel.</p>
-                <p class="text-success">This is the easiest way to go if your machine is EFI enabled.
+              <p>Generate an USB image with EFI (UEFI) bootable kernel.</p>
+              <p class="text-success">This is the easiest way to go if your machine is EFI enabled.
                 Any recent computer should support this out-of-box.</p>
-                <p class="text-danger">To use this image, you'll need to erase and overwrite the complete USB Flash Drive.</p>
+              <p class="text-danger">To use this image, you'll need to erase and overwrite the complete USB Flash Drive.
+              </p>
 
-                <p>This image is a <code>'dd' able</code> image, it's made to be copy directly on your flash drive
+              <p>This image is a <code>'dd' able</code> image, it's made to be copy directly on your flash drive
                 and not be used as a file.</p>
-                <hr>
-                <div class="generated-code">
-                    <code id="url_uefimg">...</code>
-                </div>
+              <hr>
+              <div class="generated-code">
+                <code id="url_uefimg">...</code>
+              </div>
             </td>
             <td>
-                <a class="btn btn-success" href="#" role="button" onclick="return go('uefimg');">USB Image &raquo;</a>
+              <a class="btn btn-success" href="#" role="button" onclick="return go('uefimg');">USB Image &raquo;</a>
             </td>
           </tr>
 
           <tr>
             <td>
-                <h2>EFI IMG</h2>
+              <h2>EFI IMG</h2>
             </td>
             <td>
-                <p>Generate an EFI (UEFI) bootable image.</p>
-                <p class="text-success">This is the way to go if your machine is EFI enabled.
+              <p>Generate an EFI (UEFI) bootable image.</p>
+              <p class="text-success">This is the way to go if your machine is EFI enabled.
                 Any recent computer should support this out-of-box.</p>
-                <p class="text-warning">This method requires extra step compared to EFI USB, but it's more flexible.</p>
+              <p class="text-warning">This method requires extra step compared to EFI USB, but it's more flexible.</p>
 
-                <p>When you have downloaded this image, you need to place it on a <code>FAT</code> partition.
+              <p>When you have downloaded this image, you need to place it on a <code>FAT</code> partition.
                 Name this file <code>BOOTX64.EFI</code> in the <code>EFI/BOOT</code> directory.</p>
-                <hr>
-                <div class="generated-code">
-                    <code id="url_uefi">...</code>
-                </div>
+              <hr>
+              <div class="generated-code">
+                <code id="url_uefi">...</code>
+              </div>
             </td>
             <td>
-                <a class="btn btn-success" href="#" role="button" onclick="return go('uefi');">EFI Kernel &raquo;</a>
+              <a class="btn btn-success" href="#" role="button" onclick="return go('uefi');">EFI Kernel &raquo;</a>
             </td>
           </tr>
           <tr>
             <td>
-                <h2>iPXE</h2>
+              <h2>iPXE</h2>
             </td>
             <td>
-                <p>iPXE boot plain script, this is useful for ensure the script generated is correct.</p>
-                <p>This script can be used with Packet.net, or anything other provider which
+              <p>iPXE boot plain script, this is useful for ensure the script generated is correct.</p>
+              <p>This script can be used with Packet.net, or anything other provider which
                 allows iPXE script to boot.</p>
-                <p>Uses the generated URL as remote script or download it.</p>
-                </p>
-                <hr>
-                <div class="generated-code">
-                    <code id="url_ipxe">...</code>
-                </div>
+              <p>Uses the generated URL as remote script or download it.</p>
+              </p>
+              <hr>
+              <div class="generated-code">
+                <code id="url_ipxe">...</code>
+              </div>
             </td>
             <td>
-                <a class="btn btn-primary" href="#" role="button" onclick="return go('ipxe');">iPXE Script &raquo;</a>
-            </td>
-          </tr>
-          <tr>
-            <td>
-                <h2>ISO</h2></td>
-            <td>
-                <p>Generate an ISO file you can use directly on a Virtual Machine or burn into a CD-ROM.</p>
-                <p>To use it in a Virtual Machine, choose this file as a CD-ROM image.</p>
-                </p>
-                <hr>
-                <div class="generated-code">
-                    <code id="url_iso">...</code>
-                </div>
-            </td>
-            <td>
-                <a class="btn btn-secondary" href="#" role="button" onclick="return go('iso');">ISO Image &raquo;</a>
+              <a class="btn btn-primary" href="#" role="button" onclick="return go('ipxe');">iPXE Script &raquo;</a>
             </td>
           </tr>
           <tr>
             <td>
-                <h2>USB</h2>
+              <h2>ISO</h2>
             </td>
             <td>
-                <p>Generate an USB image which can be copied into a USB Flash Drive directly.</p>
-                <p class="text-danger">This image won't work on recent computer, please use EFI USB instead.</p>
-                <p class="text-danger">Warning: to use this image, you'll need to erase and overwrite the complete USB Flash Drive.</p>
-                <p>This image is a <code>'dd' able</code> image, it's made to be copy directly on your flash drive
+              <p>Generate an ISO file you can use directly on a Virtual Machine or burn into a CD-ROM.</p>
+              <p>To use it in a Virtual Machine, choose this file as a CD-ROM image.</p>
+              </p>
+              <hr>
+              <div class="generated-code">
+                <code id="url_iso">...</code>
+              </div>
+            </td>
+            <td>
+              <a class="btn btn-secondary" href="#" role="button" onclick="return go('iso');">ISO Image &raquo;</a>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <h2>USB</h2>
+            </td>
+            <td>
+              <p>Generate an USB image which can be copied into a USB Flash Drive directly.</p>
+              <p class="text-danger">This image won't work on recent computer, please use EFI USB instead.</p>
+              <p class="text-danger">Warning: to use this image, you'll need to erase and overwrite the complete USB
+                Flash Drive.</p>
+              <p>This image is a <code>'dd' able</code> image, it's made to be copy directly on your flash drive
                 and not be used as a file.</p>
-                <hr>
-                <div class="generated-code">
-                    <code id="url_usb">...</code>
-                </div>
+              <hr>
+              <div class="generated-code">
+                <code id="url_usb">...</code>
+              </div>
             </td>
             <td>
-                <a class="btn btn-secondary" href="#" role="button" onclick="return go('usb');">USB Image &raquo;</a>
+              <a class="btn btn-secondary" href="#" role="button" onclick="return go('usb');">USB Image &raquo;</a>
             </td>
           </tr>
-                    <tr>
+          <tr>
             <td>
-                <h2>LKRN</h2>
+              <h2>LKRN</h2>
             </td>
             <td>
-                <p>Generate an LKRN bootable file.</p>
-                <p>This is more for advanced users. This file is a bootable kernel you can chain using GRUB or SYSLINUX.</p>
-                <hr>
-                <div class="generated-code">
-                    <code id="url_krn">...</code>
-                </div>
+              <p>Generate an LKRN bootable file.</p>
+              <p>This is more for advanced users. This file is a bootable kernel you can chain using GRUB or SYSLINUX.
+              </p>
+              <hr>
+              <div class="generated-code">
+                <code id="url_krn">...</code>
+              </div>
             </td>
             <td>
-                <a class="btn btn-secondary" href="#" role="button" onclick="return go('krn');">Raw Kernel &raquo;</a>
+              <a class="btn btn-secondary" href="#" role="button" onclick="return go('krn');">Raw Kernel &raquo;</a>
             </td>
           </tr>
-        </div>
       </div>
-    </main>
-  </body>
+    </div>
+  </main>
+</body>
+
 </html>
