@@ -24,26 +24,22 @@ Static target:
 ## Arguments
 All endpoints (except `/krn-generic/` and `/kernel/` which are static) accepts more optional arguments:
 ```
-...endpoint/[branch]/[zerotier-network]/[extra-arguments]
+...endpoint/target/[farmer-id]/[extra-arguments]
 ```
 
-Any argument are optional, but are ordered and dependants (eg: you cannot provide extra argument without providing zerotier network)
+Target can be one of the following, to specify in which environment kernel boots:
+- `prod`: production environment
+- `test`: testnet environment
+- `dev`: devnet environment
+
+Any [argument] are optional, but are ordered and dependants (eg: you cannot provide extra argument without providing farmer-id network)
 
 Theses are valid endpoint example:
-- `/ipxe/master`
-- `/ipxe/master/8056c2e21c000001`
-- `/ipxe/master/8056c2e21c000001/console=ttyS0`
-- `/ipxe/master/null/console=ttyS1` (special case to not set zerotier network)
+- `/ipxe/prod`
+- `/ipxe/test/1234`
+- `/ipxe/dev/5550/console=ttyS0`
 
 ### Branches
-
-You can specify any branches available, the list is displayed on the default webpage of the webservice
-
-### ZeroTier Network ID
-
-The Network ID can be either public or private. If you don't provide ID, Zero-OS will listening for incoming connection on all interface.
-
-The special ID `null` or `0` can be set to still provide extra argument without having Network ID
 
 ### Extra Argument
 
@@ -73,7 +69,7 @@ Kernel images will be served from `kernel` directory. Images are in form: `zero-
 ## Configuration
 
 You can customize the service by editing `config.py`:
-- `base-host`: http web address (eg: https://bootstrap.gig.tech)
+- `base-host`: http web address (eg: https://bootstrap.grid.tf)
 - `ipxe-template`: iPXE template path (by default, setup script install it to `/opt/ipxe-template`)
 - `ipxe-template-uefi`: iPXE UEFI template path (by default, setup script install it to `/opt/ipxe-template-uefi`)
 - `kernel-path`: path where to find kernels
