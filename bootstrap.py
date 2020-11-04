@@ -234,7 +234,7 @@ def download_mkresponse(data, filename):
 
     return response
 
-def generic_image_generator(release, farmer, extra, buildscript, targetfile, filename):
+def generic_image_generator(release, farmer, extra, buildscript, targetfile, filename, kernel=None):
     response = make_response("Request failed")
     srcdir = srcdir_from_filename(targetfile)
 
@@ -246,7 +246,7 @@ def generic_image_generator(release, farmer, extra, buildscript, targetfile, fil
 
         print("[+] creating ipxe script")
         with open(os.path.join(tmpdir, "boot.ipxe"), 'w') as f:
-            f.write(ipxe_script(release, farmer, extra))
+            f.write(ipxe_script(release, farmer, extra, kernel))
 
         print("[+] building: %s" % buildscript)
         script = os.path.join(BASEPATH, "scripts", buildscript)
@@ -393,6 +393,12 @@ def uefi_release_farmer(release, farmer):
 def uefi_release_farmer_extra(release, farmer, extra):
     print("[+] release: %s, network: %s, extra: %s" % (release, farmer, extra))
     return generic_image_generator(release, farmer, extra, "mkuefi.sh", "ipxe.efi", "ipxe-%s.efi" % release)
+
+@app.route('/uefi/<release>/<farmer>/<extra>/<kernel>', methods=['GET'])
+def uefi_release_farmer_extra_kernel(release, farmer, extra, kernel):
+    print("[+] release: %s, network: %s, extra: %s [kernel: %s]" % (release, farmer, extra, kernel))
+    return generic_image_generator(release, farmer, extra, "mkuefi.sh", "ipxe.efi", "ipxe-%s.efi" % release, kernel)
+
 
 
 @app.route('/uefimg/<release>', methods=['GET'])
