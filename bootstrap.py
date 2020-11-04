@@ -423,7 +423,7 @@ def ipxe_release_farmer_extra(release, farmer, extra):
     return text_reply(ipxe_script(release, farmer, extra))
 
 @app.route('/ipxe/<release>/<farmer>/<extra>/<kernel>', methods=['GET'])
-def ipxe_release_farmer_extra(release, farmer, extra, kernel):
+def ipxe_release_farmer_extra_kernel(release, farmer, extra, kernel):
     print("[+] release: %s, network: %s, extra: %s [kernel: %s]" % (release, farmer, extra, kernel))
     return text_reply(ipxe_script(release, farmer, extra, kernel))
 
