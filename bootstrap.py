@@ -60,8 +60,10 @@ def get_protocol():
     return 'https'
 
 # Full cycle ipxe script
-def ipxe_script(release, farmer, extra=""):
-    source = 'zero-os-development-zos-v2-generic.efi'
+def ipxe_script(release, farmer, extra="", source=None):
+    if not source:
+        source = 'zero-os-development-zos-v2-generic.efi'
+
     kernel = os.path.join(config['kernel-path'], source)
 
     if release not in ["prod", "test", "dev"]:
@@ -419,6 +421,12 @@ def ipxe_release_farmer(release, farmer):
 def ipxe_release_farmer_extra(release, farmer, extra):
     print("[+] release: %s, network: %s, extra: %s" % (release, farmer, extra))
     return text_reply(ipxe_script(release, farmer, extra))
+
+@app.route('/ipxe/<release>/<farmer>/<extra>/<kernel>', methods=['GET'])
+def ipxe_release_farmer_extra(release, farmer, extra, kernel):
+    print("[+] release: %s, network: %s, extra: %s [kernel: %s]" % (release, farmer, extra, kernel))
+    return text_reply(ipxe_script(release, farmer, extra, kernel))
+
 
 
 @app.route('/provision/<client>')
