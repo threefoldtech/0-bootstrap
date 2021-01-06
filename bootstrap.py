@@ -122,7 +122,7 @@ def ipxe_script(release, farmer, extra="", source=None):
 
     script += "\n:failed\n"
     script += "echo Initialization failed, rebooting in 10 seconds.\n"
-    script += "sleep 10"
+    script += "sleep 10\n"
 
     return script
 
