@@ -74,6 +74,14 @@ def ipxe_script(release, farmer, extra="", source=None):
 
     kernel = "%s://%s/kernel/%s" % (get_protocol(), request.host, source)
 
+    chain = "%s runmode=%s" % (kernel, release)
+
+    if farmer:
+        chain += " farmer_id=%s" % farmer
+
+    if extra:
+        chain += " " + extra
+
     script  = "#!ipxe\n"
     script += "echo ================================\n"
     script += "echo == Zero-OS Kernel Boot Loader ==\n"
@@ -107,17 +115,8 @@ def ipxe_script(release, farmer, extra="", source=None):
     script += "ntp pool.ntp.org || \n\n"
 
     script += "echo Downloading Zero-OS image...\n"
-    script += "chain %s" % kernel
+    script += "chain %s ||\n" % chain
 
-    script += " runmode=%s" % release
-
-    if farmer:
-        script += " farmer_id=%s" % farmer
-
-    if extra:
-        script += " " + extra
-
-    script += " ||\n"
     script += "\n:failed\n"
     script += "echo Initialization failed, rebooting in 10 seconds.\n"
     script += "sleep 10"
