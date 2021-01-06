@@ -16,9 +16,12 @@ rm -rf ipxe-legacy
 echo "[+] downloading source code"
 git clone --depth=1 https://github.com/gigforks/ipxe
 
-wget https://letsencrypt.org/certs/lets-encrypt-r3-cross-signed.pem -O ipxe/lets-encrypt-r3-cross-signed.pem
-wget https://letsencrypt.org/certs/lets-encrypt-r3.pem -O ipxe/lets-encrypt-r3.pem
-wget https://letsencrypt.org/certs/isrgrootx1.pem -O ipxe/isrgrootx1.pem
+# download let's encrypt root certificates
+pushd ipxe/src
+wget https://letsencrypt.org/certs/lets-encrypt-r3-cross-signed.pem
+wget https://letsencrypt.org/certs/lets-encrypt-r3.pem
+wget https://letsencrypt.org/certs/isrgrootx1.pem
+popd
 
 mkcert="isrgrootx1.pem,lets-encrypt-r3-cross-signed.pem,lets-encrypt-r3.pem"
 
