@@ -72,9 +72,10 @@ def ipxe_script(release, farmer, extra="", source=None):
     if not os.path.exists(kernel):
         abort(404)
 
-    kernel = "%s://%s/kernel/%s" % (get_protocol(), request.host, source)
+    kernel_secure = "https://%s/kernel/%s" % (request.host, source)
+    kernel_simple = "http://%s/kernel/%s" % (request.host, source)
 
-    chain = "%s runmode=%s" % (kernel, release)
+    chain = "runmode=%s" % (kernel, release)
 
     if farmer:
         chain += " farmer_id=%s" % farmer
@@ -114,8 +115,10 @@ def ipxe_script(release, farmer, extra="", source=None):
     script += "echo Synchronizing time\n"
     script += "ntp pool.ntp.org || \n\n"
 
+    # download https, fallback to http
     script += "echo Downloading Zero-OS image...\n"
-    script += "chain %s ||\n" % chain
+    script += "chain %s %s ||\n" % (kernel_secure, chain)
+    script += "chain %s %s ||\n" % (kernel_simple, chain)
 
     script += "\n:failed\n"
     script += "echo Initialization failed, rebooting in 10 seconds.\n"
