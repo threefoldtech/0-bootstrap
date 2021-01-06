@@ -73,7 +73,7 @@ def ipxe_script(release, farmer, extra="", source=None):
         abort(404)
 
     kernel_secure = "https://%s/kernel/%s" % (request.host, source)
-    kernel_simple = "http://%s/kernel/%s" % (request.host, source)
+    kernel_simple = "http://unsecure.%s/kernel/%s" % (request.host, source)
 
     chain = "runmode=%s" % release
 
