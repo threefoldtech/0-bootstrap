@@ -75,7 +75,7 @@ def ipxe_script(release, farmer, extra="", source=None):
     kernel_secure = "https://%s/kernel/%s" % (request.host, source)
     kernel_simple = "http://%s/kernel/%s" % (request.host, source)
 
-    chain = "runmode=%s" % (kernel, release)
+    chain = "runmode=%s" % release
 
     if farmer:
         chain += " farmer_id=%s" % farmer
