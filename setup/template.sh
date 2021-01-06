@@ -11,7 +11,7 @@ pushd /tmp
 echo "[+] clean up previous stuff"
 rm -rf ipxe
 rm -rf ipxe-legacy
-rm -rf ipxe-legacy
+rm -rf ipxe-uefi
 
 echo "[+] downloading source code"
 git clone --depth=1 https://github.com/gigforks/ipxe
