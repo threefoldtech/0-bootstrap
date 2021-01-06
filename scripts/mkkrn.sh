@@ -11,9 +11,10 @@ cat ${root}/boot.ipxe
 
 pushd ${root}/src
 
-MKCERT="letsencrypt-x3-cross.crt,letsencrypt-x3.crt"
-MKTRUST="letsencrypt-x3-cross.crt,letsencrypt-x3.crt"
+MKCERT="isrgrootx1.pem,lets-encrypt-r3.pem,lets-encrypt-r3-cross-signed.pem"
+MKTRUST=${MKCERT}
 
+# make bin/ipxe.lkrn DEBUG=x509 EMBED=${root}/boot.ipxe CERT=${MKCERT} TRUST=${MKTRUST}
 make bin/ipxe.lkrn EMBED=${root}/boot.ipxe CERT=${MKCERT} TRUST=${MKTRUST}
 
 cp bin/ipxe.lkrn ${root}/

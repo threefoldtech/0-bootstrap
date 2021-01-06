@@ -9,8 +9,8 @@ echo "[+] root is: ${root}"
 
 pushd ${root}/src
 
-MKCERT="letsencrypt-x3-cross.crt,letsencrypt-x3.crt"
-MKTRUST="letsencrypt-x3-cross.crt,letsencrypt-x3.crt"
+MKCERT="isrgrootx1.pem,lets-encrypt-r3.pem,lets-encrypt-r3-cross-signed.pem"
+MKTRUST=${MKCERT}
 
 make bin/ipxe.lkrn CERT=${MKCERT} TRUST=${MKTRUST}
 
