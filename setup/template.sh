@@ -24,6 +24,7 @@ wget https://letsencrypt.org/certs/isrgrootx1.pem
 popd
 
 mkcert="isrgrootx1.pem,lets-encrypt-r3-cross-signed.pem,lets-encrypt-r3.pem"
+mktrust=${mkcert}
 
 echo "[+] preparing images"
 cp -r ipxe ipxe-legacy
