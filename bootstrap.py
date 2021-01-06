@@ -72,7 +72,7 @@ def ipxe_script(release, farmer, extra="", source=None):
     if not os.path.exists(kernel):
         abort(404)
 
-    kernel_secure = "https://%s/kernel/%s" % (request.host, source)
+    kernel_secure = "%s://%s/kernel/%s" % (get_protocol(), request.host, source)
     kernel_simple = "http://unsecure.%s/kernel/%s" % (request.host, source)
 
     chain = "runmode=%s" % release
@@ -118,7 +118,7 @@ def ipxe_script(release, farmer, extra="", source=None):
     # download https, fallback to http
     script += "echo Downloading Zero-OS image...\n"
     script += "chain %s %s ||\n" % (kernel_secure, chain)
-    script += "chain %s %s ||\n" % (kernel_simple, chain)
+    # script += "chain %s %s ||\n" % (kernel_simple, chain)
 
     script += "\n:failed\n"
     script += "echo Initialization failed, rebooting in 10 seconds.\n"
