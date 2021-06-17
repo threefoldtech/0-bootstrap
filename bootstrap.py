@@ -75,7 +75,7 @@ def ipxe_script(release, farmer, extra="", source=None):
     kernel_secure = "%s://%s/kernel/%s" % (get_protocol(), request.host, source)
     kernel_simple = "http://unsecure.%s/kernel/%s" % (request.host, source)
 
-    chain = "runmode=%s" % release
+    chain = "nomodeset runmode=%s" % release
 
     if farmer:
         chain += " farmer_id=%s" % farmer
@@ -154,7 +154,7 @@ def ipxe_quick_script(release, farmer, extra=""):
     script += "echo \n\n"
 
     script += "echo Downloading Zero-OS image...\n"
-    script += "chain %s" % kernel
+    script += "chain %s nomodeset" % kernel
 
     script += " runmode=%s" % release
 
