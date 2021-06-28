@@ -81,7 +81,7 @@ def ipxe_script(release, farmer, extra="", source=None):
         chain += " farmer_id=%s" % farmer
 
     if extra:
-        chain += " " + extra
+        chain += " " + extra.replace("___", "/")
 
     script  = "#!ipxe\n"
     script += "echo ================================\n"
