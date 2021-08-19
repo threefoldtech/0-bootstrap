@@ -75,8 +75,6 @@ You can customize the service by editing `config.py`:
 - `kernel-path`: path where to find kernels
 - `http-port`: http listen port,
 - `debug`: enable (True) or disable (False) debug Flask
-- `popular`: list of branches to mark as popular on the homepage
-- `popular-description`: list of branches with their description (on the homepage)
 
 ## Documentation
 
