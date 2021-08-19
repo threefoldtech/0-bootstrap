@@ -51,12 +51,12 @@
   <main role="main">
     <div class="jumbotron">
       <div class="container">
-        <h1 class="display-3">Zero-OS Bootstrapping</h1>
+        <h1 class="display-3">Zero-OS v3 Bootstrapping</h1>
         <p>
           Welcome to the Zero-OS Boot Generator Assistant which will helps you to generate your own
           boot device for your system. Please follow the next steps.
 
-          These steps will guide you to setup a boot device ready to use Zero-OS v2.
+          These steps will guide you to setup a boot device ready to use Zero-OS v3.
         </p>
       </div>
     </div>
@@ -82,8 +82,7 @@
               </div>
               <div class="form-group row">
                 <div class="col-sm-2"></div>
-                <div class="col-sm-10 tip">
-                </div>
+                <div class="col-sm-10 tip"></div>
               </div>
             </form>
           </div>
@@ -99,20 +98,24 @@
           Please choose the release you want.</p>
 
         <div class="card-deck mb-3">
-          <div class="card mb-4 shadow-sm border-success tf-card tf-card-selected" id="tf-runmode-prod">
+          <div class="card mb-4 shadow-sm border-success tf-card" id="tf-runmode-prod">
             <div class="card-header bg-success">
               <h4 class="my-0 font-weight-normal text-center">Production</h4>
             </div>
             <div class="card-body">
               <h5 class="card-title text-center">The real network</h5>
 
+              <!--
               <p>Production releases are used for server ready to serve the real grid. This release is the
                 most stable and optimized version we have.</p>
 
               <p>This release is the only one you can use if you want to host real workflow.</p>
+              -->
+
+              <p>This mode is not yet available for the version 3 of our grid, but stay tuned !</p>
             </div>
             <div class="card-footer bg-white">
-              <button type="button" class="btn btn-lg btn-block btn-success" onclick="setmode('prod');">Go live</button>
+              <button type="button" disabled class="btn btn-lg btn-block btn-outline-success" onclick="setmode('prod');">Soon !</button>
             </div>
           </div>
           <div class="card mb-4 shadow-sm border-warning tf-card" id="tf-runmode-test">
@@ -122,6 +125,7 @@
             <div class="card-body">
               <h5 class="card-title text-center">Make it bulletproof</h5>
 
+              <!--
               <p>Before sending release over the real world, we want to ensure everything is bulletproof,
                 rock solid and tested a lot. Averyy release we make before going in production, goes into this
                 testing release and uses the same settings as production but on a separate network to
@@ -129,28 +133,39 @@
 
               <p>These releases are made for people who want to test the
                 system and help the community to improve the system.</p>
+              -->
+
+              <p>This mode is not yet available for the version 3 of our grid, but stay tuned !</p>
             </div>
             <div class="card-footer bg-white">
-              <button type="button" class="btn btn-lg btn-block btn-outline-warning" onclick="setmode('test');">Let's
-                test</button>
+              <button type="button" disabled class="btn btn-lg btn-block btn-outline-warning" onclick="setmode('test');">
+                  Soon !
+              </button>
             </div>
           </div>
-          <div class="card mb-4 shadow-sm border-danger tf-card" id="tf-runmode-dev">
+          <div class="card mb-4 shadow-sm border-danger tf-card tf-card-selected" id="tf-runmode-dev">
             <div class="card-header bg-danger">
               <h4 class="my-0 font-weight-normal text-center">Development</h4>
             </div>
             <div class="card-body">
               <h5 class="card-title text-center">Crashtest</h5>
 
+              <p>Our current version 3 is the next awesome release of the grid. This version includes
+              real decentralization and lots of new features, but it's still in an early stage.</p>
+
+              <p>Thank you to join this next release but keep in mind this is not stable yet.</p>
+
+              <!--
               <p>Our developers never stop to improve and add features to Zero-OS to make it even better.
                 As soon as something has to be tested, this is done in development mode. This mode is the most
                 unstable, but up-to-date, used to test and continuously develop the operating system.</p>
 
               <p>You should use a development release only if you're developer or if someone told you
                 to use this for specific reasons.</p>
+              -->
             </div>
             <div class="card-footer bg-white">
-              <button type="button" class="btn btn-lg btn-block btn-outline-danger" onclick="setmode('dev');">Get
+              <button type="button" class="btn btn-lg btn-block btn-danger" onclick="setmode('dev');">Get
                 wild</button>
             </div>
           </div>

@@ -1,12 +1,11 @@
 var allValid = false;
 var allValidReason = '';
 
-var jwtkargs = null;
 var buildlist = ['ipxe', 'iso', 'usb', 'uefi', 'uefimg', 'krn'];
 var finalUrl = '...';
 
 var tfmodes = {"prod": "success", "test": "warning", "dev": "danger"};
-var tfmode = "prod";
+var tfmode = "dev";
 
 function farmerid_invalid() {
     allValid = false;

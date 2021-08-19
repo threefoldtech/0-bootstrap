@@ -24,9 +24,9 @@ app = Flask(__name__, static_url_path='/static')
 app.url_map.strict_slashes = False
 
 runmodes = {
-    "prod": "production",
-    "test": "testing",
-    "dev": "development"
+    "prod": "production (v3)",
+    "test": "testing (v3)",
+    "dev": "development (v3)"
 }
 
 #
@@ -75,7 +75,7 @@ def ipxe_script(release, farmer, extra="", source=None):
     kernel_secure = "%s://%s/kernel/%s" % (get_protocol(), request.host, source)
     kernel_simple = "http://unsecure.%s/kernel/%s" % (request.host, source)
 
-    chain = "nomodeset runmode=%s" % release
+    chain = "nomodeset version=v3 runmode=%s" % release
 
     if farmer:
         chain += " farmer_id=%s" % farmer
@@ -463,7 +463,9 @@ def provision_client(client):
 #
 @app.route('/', methods=['GET'])
 def homepage():
-    content = {}
+    content = {
+        "baseurl": request.base_url[:-1],
+    }
     return render_template("generate.html", **content)
 
 @app.route('/images', methods=['GET'])
