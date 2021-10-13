@@ -347,7 +347,7 @@ def usb_release_farmer_extra(release, farmer, extra):
     return generic_image_generator(release, farmer, extra, "mkusb.sh", "ipxe.usb", "ipxe-%s.img" % release)
 
 @app.route('/usb/<release>/<farmer>/<extra>/<kernel>', methods=['GET'])
-def usb_release_farmer_extra_kernel(release, farmer, extra):
+def usb_release_farmer_extra_kernel(release, farmer, extra, kernel):
     print("[+] release: %s, network: %s, extra: %s [kernel: %s]" % (release, farmer, extra, kernel))
     return generic_image_generator(release, farmer, extra, "mkusb.sh", "ipxe.usb", "ipxe-%s.img" % release, kernel)
 
