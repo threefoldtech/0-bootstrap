@@ -422,6 +422,12 @@ def uefimg_release_farmer_extra(release, farmer, extra):
     print("[+] release: %s, network: %s, extra: %s" % (release, farmer, extra))
     return generic_image_generator(release, farmer, extra, "mkuefimg.sh", "uefimg.img", "uefiusb-%s.img" % release)
 
+@app.route('/uefimg/<release>/<farmer>/<extra>/<kernel>', methods=['GET'])
+def uefimg_release_farmer_extra_kernel(release, farmer, extra, kernel):
+    print("[+] release: %s, network: %s, extra: %s [kernel: %s]" % (release, farmer, extra, kernel))
+    return generic_image_generator(release, farmer, extra, "mkuefimg.sh", "uefimg.img", "uefiusb-%s.img" % release, kernel)
+
+
 
 @app.route('/ipxe/<release>', methods=['GET'])
 def ipxe_release(release):
