@@ -406,7 +406,13 @@ def provision_client(client):
 #
 @app.route('/', methods=['GET'])
 def homepage():
-    content = {}
+    base = request.base_url[:-1]
+    base = base.replace("http://", "https://") # force https
+
+    content = {
+        "baseurl": base,
+    }
+
     return render_template("generate.html", **content)
 
 @app.route('/images', methods=['GET'])
