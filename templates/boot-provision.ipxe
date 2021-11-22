@@ -1,0 +1,32 @@
+#!ipxe
+echo =================================
+echo == Zero-OS Client Provisioning ==
+echo =================================
+echo
+
+set idx:int32 0
+
+echo Initializing network
+
+:loop isset ${net${idx}/mac} || goto loop_done
+ifconf --configurator dhcp net${idx} || goto loop_fail
+
+echo Synchronizing time
+ntp pool.ntp.org ||
+
+echo
+show ip
+route
+echo
+
+echo Requesting provisioning configuration...
+chain {{url}} || goto loop_fail
+
+:failed
+sleep 10
+
+:loop_fail
+inc idx && goto loop
+
+:loop_done
+echo No network connectivity.

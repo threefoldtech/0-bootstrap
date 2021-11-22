@@ -1,0 +1,96 @@
+#!ipxe
+console
+
+set esc:hex 1b
+set red ${esc:string}[31;1m
+set green ${esc:string}[32;1m
+set yellow ${esc:string}[33;1m
+set blue ${esc:string}[34;1m
+set cyan ${esc:string}[36;1m
+set reset ${esc:string}[0m
+
+set netretry:int32 3
+
+echo -n ${blue}
+echo ===================================
+echo == ${cyan}Zero-OS v3 Kernel Boot Loader${blue} ==
+echo ===================================
+echo ${reset}
+
+echo Release.....: {{release}}
+echo Farmer......: {{farmerid}}
+echo Parameters..: {{parameters}}
+echo 
+
+isset ${net0/mac} || goto netcard_failed
+
+:loop_master_retry
+set netidx:int32 0
+
+:loop_iface
+isset ${net${netidx}/mac} || goto next_master_retry
+
+echo ${cyan}Interface: net${netidx}, chipset: ${net${netidx}/chip}${reset}
+ifconf --configurator dhcp net${netidx} || goto next_iface
+echo 
+isset ${net${netidx}/ip} && echo net${netidx}/ip: ${net${netidx}/ip} || goto next_iface
+isset ${net${netidx}/dns} && echo net${netidx}/dns: ${net${netidx}/dns} || goto next_iface
+isset ${net${netidx}/gateway} && echo net${netidx}/gateway: ${net${netidx}/gateway} || goto next_iface
+echo 
+goto network_configured
+
+:next_iface
+inc netidx
+goto loop_iface
+
+:next_master_retry
+inc netretry -1
+iseq ${netretry} 0 && goto network_failed || goto loop_master_retry
+
+:network_configured
+echo ${cyan}Synchronizing time...${reset}
+ntp pool.ntp.org || 
+echo
+
+echo ${cyan}Downloading Zero-OS image...${reset}
+set downloadretry:int32 3
+
+:loop_download
+imgfetch --name zos {{kernel}} {{cmdline}} || goto download_retry
+imgstat zos
+
+echo
+echo ${green}Zero-OS is downloaded and ready, starting up...${reset}
+imgexec zos ||
+
+:download_retry
+inc downloadretry -1
+iseq ${downloadretry} 0 && goto download_failed || goto loop_download
+
+:network_failed
+echo
+echo ${green}Network interface detected ${reset}but ${yellow}autoconfiguration failed${reset}
+echo  >> Ensure your network cable is plugged and link is active
+echo  >> Ensure your DHCP is working and responding in time
+goto master_end
+
+:download_failed
+echo
+echo ${green}Network configuration succeed ${reset}but ${yellow}Zero-OS kernel could not be downloaded${reset}
+echo Please contact support with a picture of this screen
+goto master_end
+
+:netcard_failed
+echo ${red}No network card found${reset}
+echo  >> Ensure your network card is enabled in BIOS settings
+echo  >> Ensure CSM is disabled and UEFI is allowed for PXE boot
+echo
+echo Please contact support for extra information
+goto master_end
+
+:master_end
+echo
+echo -n Rebooting in 20 seconds... 
+sleep 20
+reboot
+
