@@ -61,7 +61,7 @@ imgstat zos
 
 echo
 echo ${green}Zero-OS is downloaded and ready, starting up...${reset}
-imgexec zos ||
+imgexec zos || goto exec_failed
 
 :download_retry
 inc downloadretry -1
@@ -77,6 +77,12 @@ goto master_end
 :download_failed
 echo
 echo ${green}Network configuration succeed ${reset}but ${yellow}Zero-OS kernel could not be downloaded${reset}
+echo Please contact support with a picture of this screen
+goto master_end
+
+:exec_failed
+echo
+echo ${green}Image downloaded ${reset}but ${yellow}Zero-OS kernel could not be executed${reset}
 echo Please contact support with a picture of this screen
 goto master_end
 
