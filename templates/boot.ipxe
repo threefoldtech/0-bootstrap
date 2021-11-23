@@ -13,7 +13,7 @@ set netretry:int32 3
 
 echo -n ${blue}
 echo ===================================
-echo == ${cyan}Zero-OS v3 Kernel Boot Loader${blue} ==
+echo == ${cyan}Zero-OS v2 Kernel Boot Loader${blue} ==
 echo ===================================
 echo ${reset}
 
