@@ -1,0 +1,17 @@
+#!ipxe
+echo
+
+echo ==================================
+echo == Zero-OS Client Configuration ==
+echo ==================================
+
+echo
+echo Release.....: {{release}}
+echo Parameters..: {{parameters}}
+echo 
+
+echo Downloading Zero-OS image...
+chain {{kernel}} {{cmdline}} ||
+
+:failed
+sleep 10
