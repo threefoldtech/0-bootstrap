@@ -83,54 +83,22 @@ def ipxe_script(release, farmer, extra="", source=None):
     if extra:
         chain += " " + extra.replace("___", "/")
 
-    script  = "#!ipxe\n"
-    script += "echo ================================\n"
-    script += "echo == Zero-OS Kernel Boot Loader ==\n"
-    script += "echo ================================\n"
-    script += "echo \n\n"
+    settings = {
+        "release": runmodes[release],
+        "farmerid": farmer,
+        "parameters": extra,
+        "kernel": kernel_secure,
+        "cmdline": chain,
+    }
 
-    script += "echo Release.....: %s\n" % runmodes[release]
-    script += "echo Farmer......: %s\n" % farmer
-    script += "echo Parameters..: %s\n" % extra
-    script += "echo \n\n"
+    return render_template("boot.ipxe", **settings)
 
-    script += "echo Initializing network\n"
-    script += "set idx:int32 0\n\n"
-
-    script += ":loop_iface isset ${net${idx}/mac} || goto failed\n"
-    script += "echo Interface: net${idx}, chipset: ${net${idx}/chip}\n"
-    script += "ifconf --configurator dhcp net${idx} || goto loop_next_iface\n"
-    script += "echo \n"
-    script += "isset ${net${idx}/ip} && echo net${idx}/ip: ${net${idx}/ip} || goto loop_next_iface\n"
-    script += "isset ${net${idx}/dns} && echo net${idx}/dns: ${net${idx}/dns} || goto loop_next_iface\n"
-    script += "isset ${net${idx}/gateway} && echo net${idx}/gateway: ${net${idx}/gateway} || goto loop_next_iface\n"
-    script += "echo \n"
-    script += "goto loop_done\n\n"
-
-    script += ":loop_next_iface\n"
-    script += "inc idx && goto loop_iface\n\n"
-
-    script += ":loop_done\n"
-
-    script += "echo Synchronizing time\n"
-    script += "ntp pool.ntp.org || \n\n"
-
-    # download https, fallback to http
-    script += "echo Downloading Zero-OS image...\n"
-    script += "chain %s %s ||\n" % (kernel_secure, chain)
-    # script += "chain %s %s ||\n" % (kernel_simple, chain)
-
-    script += "\n:failed\n"
-    script += "echo Initialization failed, rebooting in 10 seconds.\n"
-    script += "sleep 10\n"
-
-    return script
 
 # No network setup script
 # Used for provision clients which have already network setup
 # by provision image
 def ipxe_quick_script(release, farmer, extra=""):
-    source = 'zero-os-development-zos-v2-generic.efi' % "xxxx" # FIXME: hardcode url
+    source = 'zero-os-development-zos-v2-generic.efi' # FIXME: hardcode url
     kernel = os.path.join(config['kernel-path'], source)
 
     if release not in ["prod", "test", "dev"]:
@@ -140,69 +108,32 @@ def ipxe_quick_script(release, farmer, extra=""):
         abort(404)
 
     kernel = "%s://%s/kernel/%s" % (get_protocol(), request.host, source)
-
-    script  = "#!ipxe\n"
-    script += "echo \n\n"
-
-    script += "echo ==================================\n"
-    script += "echo == Zero-OS Client Configuration ==\n"
-    script += "echo ==================================\n"
-
-    script += "echo \n\n"
-    script += "echo Release.....: %s\n" % runmodes[release]
-    script += "echo Parameters..: %s\n" % extra
-    script += "echo \n\n"
-
-    script += "echo Downloading Zero-OS image...\n"
-    script += "chain %s nomodeset" % kernel
-
-    script += " runmode=%s" % release
+    cmdline = "nomodeset runmode=%s" % release
 
     if farmer:
-        script += " farmer_id=%s" % farmer
-
+        cmdline += " farmer_id=%s" % farmer
 
     if extra:
-        script += " " + extra
+        cmdline += " " + extra
 
-    script += " ||\n"
-    script += "\n:failed\n"
-    script += "sleep 10"
+    settings = {
+        "release": runmodes[release],
+        "parameters": extra,
+        "kernel": kernel,
+        "cmdline": cmdline,
+    }
 
-    return script
+    return render_template("boot-quick.ipxe", **settings)
+
 
 # Provisioning image requesting configuration on runtime
 def ipxe_provision():
-    script  = "#!ipxe\n"
-    script += "echo =================================\n"
-    script += "echo == Zero-OS Client Provisioning ==\n"
-    script += "echo =================================\n"
-    script += "echo \n\n"
-    script += "set idx:int32 0"
-    script += "\n"
-    script += "echo Initializing network\n"
-    script += "\n"
-    script += ":loop isset ${net${idx}/mac} || goto loop_done\n"
-    script += "ifconf --configurator dhcp net${idx} || goto loop_fail\n"
-    script += "echo Synchronizing time\n"
-    script += "ntp pool.ntp.org || \n\n"
-    script += "echo \n"
-    script += "show ip\n"
-    script += "route\n"
-    script += "echo \n\n"
-    script += "echo Requesting provisioning configuration...\n"
-    script += "chain %s://%s/provision/${net${idx}/mac} || goto loop_fail\n" % (get_protocol(), request.host)
+    url = "%s://%s/provision/${net${idx}/mac}" % (get_protocol(), request.host)
+    settings = {
+        "url": url,
+    }
 
-    script += "\n:failed\n"
-    script += "sleep 10\n\n"
-
-    script += ":loop_fail\n"
-    script += "inc idx && goto loop\n\n"
-
-    script += ":loop_done\n"
-    script += "echo No network connectivity.\n"
-
-    return script
+    return render_template("boot-provision.ipxe", **settings)
 
 
 def text_reply(payload):
