@@ -23,7 +23,7 @@
       update_trigger();
     });
   </script>
-  <script src="/static/generate.js"></script>
+  <script src="/static/generate.js?1"></script>
 </head>
 
 <body>
@@ -98,7 +98,7 @@
           Please choose the release you want.</p>
 
         <div class="card-deck mb-3">
-          <div class="card mb-4 shadow-sm border-success tf-card" id="tf-runmode-prod">
+          <div class="card mb-4 shadow-sm border-success tf-card-selected" id="tf-runmode-prod">
             <div class="card-header bg-success">
               <h4 class="my-0 font-weight-normal text-center">Production</h4>
             </div>
@@ -114,7 +114,7 @@
               <button type="button" class="btn btn-lg btn-block btn-success" onclick="setmode('prod');">Go live</button>
             </div>
           </div>
-          <div class="card mb-4 shadow-sm border-warning tf-card tf-card-selected" id="tf-runmode-test">
+          <div class="card mb-4 shadow-sm border-warning tf-card" id="tf-runmode-test">
             <div class="card-header bg-warning">
               <h4 class="my-0 font-weight-normal text-center">Testing</h4>
             </div>
