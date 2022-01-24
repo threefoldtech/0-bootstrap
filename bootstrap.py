@@ -339,6 +339,14 @@ def uefi_release_farmer_extra_kernel(release, farmer, extra, kernel):
 
 
 
+@app.route('/snponly/<release>/<farmer>/<extra>', methods=['GET'])
+def snponly_release_farmer_extra(release, farmer, extra):
+    print("[+] snponly, release: %s, network: %s, extra: %s" % (release, farmer, extra))
+    return generic_image_generator(release, farmer, extra, "mksnponly.sh", "ipxe.efi", "ipxe-snp-%s.efi" % release)
+
+
+
+
 @app.route('/uefimg/<release>', methods=['GET'])
 def uefimg_release(release):
     return uefimg_release_farmer_extra(release, "", "")
