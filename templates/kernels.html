@@ -53,7 +53,7 @@
               {% for file in files %}
                 <tr>
                     <td>
-                        <a class="kernel" href="/generate/{{ file['release'] }}">{{ file['release'] }}</a>
+                        <a class="kernel" href="/kernel/{{ file['name'] }}">{{ file['release'] }}</a>
                     </td>
                     <td>{{ file['updated'] }}</td>
                     <td><a href="/kernel/{{ file['name'] }}"><span class="octicon octicon-arrow-down"></span></a></td>
