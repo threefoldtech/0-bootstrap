@@ -26,7 +26,8 @@ app.url_map.strict_slashes = False
 runmodes = {
     "prod": "production (v3)",
     "test": "testing (v3)",
-    "dev": "development (v3)"
+    "dev": "development (v3)",
+    "qa": "qa-network (v3)",
 }
 
 #
@@ -66,7 +67,7 @@ def ipxe_script(release, farmer, extra="", source=None):
 
     kernel = os.path.join(config['kernel-path'], source)
 
-    if release not in ["prod", "test", "dev"]:
+    if release not in runmodes.keys():
         abort(401)
 
     if not os.path.exists(kernel):
@@ -101,7 +102,7 @@ def ipxe_quick_script(release, farmer, extra=""):
     source = 'zero-os-development-zos-v2-generic.efi'
     kernel = os.path.join(config['kernel-path'], source)
 
-    if release not in ["prod", "test", "dev"]:
+    if release not in runmodes.keys():
         abort(401)
 
     if not os.path.exists(kernel):
