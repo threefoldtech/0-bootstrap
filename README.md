@@ -77,6 +77,3 @@ You can customize the service by editing `config.py`:
 - `http-port`: http listen port,
 - `debug`: enable (True) or disable (False) debug Flask
 
-## Documentation
-
-For more documentation see the [`/docs`](./docs) directory, where you'll find a [table of contents](/docs/SUMMARY.md).
