@@ -31,6 +31,7 @@ Target can be one of the following, to specify in which environment kernel boots
 - `prod`: production environment
 - `test`: testnet environment
 - `dev`: devnet environment
+- `qa`: quality-assurance special dedicated network
 
 Any [argument] are optional, but are ordered and dependants (eg: you cannot provide extra argument without providing farmer-id network)
 
