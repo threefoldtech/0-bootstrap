@@ -24,4 +24,13 @@ config = {
 
     # sqlite3 database used for provisioning
     'bootstrap-db': 'db/bootstrap.sqlite3',
+
+    # allowed run-modes and their pretty name
+    'runmodes': {
+        "prod": "production (v3)",
+        "test": "testing (v3)",
+        "dev": "development (v3)",
+        "qa": "qa-network (v3)",
+    },
+
 }
