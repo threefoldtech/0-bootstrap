@@ -93,7 +93,7 @@
       <div class="container">
         <h1 class="text-center">Which release do you want ?</h1>
 
-        <p>Zero-OS comes by default with 3 different <code>running modes</code>. Each mode has its own settings,
+        <p>Zero-OS comes by default with 4 different <code>running modes</code>. Each mode has its own settings,
           own network and own purpose.<br>
           Please choose the release you want.</p>
 
@@ -114,7 +114,7 @@
               <button type="button" class="btn btn-lg btn-block btn-success" onclick="setmode('prod');">Go live</button>
             </div>
           </div>
-          <div class="card mb-4 shadow-sm border-warning tf-card" id="tf-runmode-test">
+          <div class="card mb-3 shadow-sm border-warning tf-card" id="tf-runmode-test">
             <div class="card-header bg-warning">
               <h4 class="my-0 font-weight-normal text-center">Test Network</h4>
             </div>
@@ -144,7 +144,7 @@
               </button>
             </div>
           </div>
-          <div class="card mb-4 shadow-sm border-danger tf-card" id="tf-runmode-dev">
+          <div class="card mb-3 shadow-sm border-danger tf-card" id="tf-runmode-dev">
             <div class="card-header bg-danger">
               <h4 class="my-0 font-weight-normal text-center">Dev Network</h4>
             </div>
@@ -168,6 +168,24 @@
             <div class="card-footer bg-white">
               <button type="button" class="btn btn-lg btn-block btn-danger" onclick="setmode('dev');">
                   Get wild
+              </button>
+            </div>
+          </div>
+          <div class="card mb-3 shadow-sm border-info tf-card" id="tf-runmode-qa">
+            <div class="card-header bg-info">
+              <h4 class="my-0 font-weight-normal text-center">QA Network</h4>
+            </div>
+            <div class="card-body">
+              <h5 class="card-title text-center">Quality Assurance</h5>
+
+              <p>We opened our quality assurance network temporarily.</p>
+
+              <p>Please only use that network if you know what you're doing. Thanks for your help !</p>
+
+            </div>
+            <div class="card-footer bg-white">
+              <button type="button" class="btn btn-lg btn-block btn-info" onclick="setmode('qa');">
+                  Go QA
               </button>
             </div>
           </div>

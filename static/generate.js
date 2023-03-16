@@ -4,7 +4,7 @@ var allValidReason = '';
 var buildlist = ['ipxe', 'iso', 'usb', 'uefi', 'uefimg', 'krn'];
 var finalUrl = '...';
 
-var tfmodes = {"prod": "success", "test": "warning", "dev": "danger"};
+var tfmodes = {"prod": "success", "test": "warning", "dev": "danger", "qa": "info"};
 var tfmode = "prod";
 
 function farmerid_invalid() {
