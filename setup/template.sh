@@ -14,7 +14,7 @@ rm -rf ipxe-legacy
 rm -rf ipxe-uefi
 
 echo "[+] downloading source code"
-git clone https://github.com/threefoldtech/ipxe
+git clone -b gcc-12 https://github.com/threefoldtech/ipxe
 
 # download let's encrypt root certificates
 pushd ipxe/src
