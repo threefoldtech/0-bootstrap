@@ -69,7 +69,7 @@ def ipxe_script(release, farmer, extra="", source=None):
     kernel_secure = "%s://%s/kernel/%s" % (get_protocol(), request.host, source)
     kernel_simple = "http://unsecure.%s/kernel/%s" % (request.host, source)
 
-    chain = "nomodeset version=v3 runmode=%s" % release
+    chain = "nomodeset version=v3 runmode=%s panic=7200" % release
 
     if farmer:
         chain += " farmer_id=%s" % farmer
