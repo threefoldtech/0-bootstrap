@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="Zero-OS Bootstrap">
+  <meta name="author" content="ThreeFold Tech">
+
+  <title>Zero-OS Bootstrap Image Generator</title>
+
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css"
+    integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/octicons/4.4.0/font/octicons.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Quicksand|Roboto:300&display=swap">
+  <link rel="stylesheet" href="/static/bootstrap.css">
+
+  <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"></script>
+  <script src="/static/expert.js"></script>
+  <script>
+    $(document).ready(function() {
+        $("#farmerid").focus();
+    });
+  </script>
+</head>
+
+<body>
+  <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+    <div class="container">
+      <a class="navbar-brand" href="/">Zero-OS Bootstrap</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsDefault"
+        aria-controls="navbarsDefault" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbarsDefault">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="/">Generator</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/images">Images list</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link active" href="/expert">Expert mode <span class="sr-only">(current)</span></a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <main role="main">
+    <div class="jumbotron">
+      <div class="container">
+        <h1 class="display-3">Zero-OS Expert Bootstrap</h1>
+      </div>
+    </div>
+
+    <div class="jumbotron jumbostep">
+      <div class="container">
+        <form>
+            <div class="form-group">
+                <label for="farmerid">Farmer ID</label>
+                <input type="text" class="form-control" id="farmerid" placeholder="1234">
+                <small id="farmerHelp" class="form-text text-muted">Your numeric Farmer ID.</small>
+            </div>
+            <div class="form-group">
+                <label for="network">Network</label>
+                <select id="network" class="form-control">
+                    <option value="main">Main Network</option>
+                    <option value="test">Test Network</option>
+                    <option value="dev" selected>Dev Network</option>
+                    <option value="qa">QA Network</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="kargs">Extra kernel arguments</label>
+                <input type="text" class="form-control" id="kargs" placeholder="noapic">
+                <small id="kargsHelp" class="form-text text-muted">Extra kernel parameters to set, theses parameters are set at the end of command line.</small>
+            </div>
+            <div class="form-group">
+                <label for="kernel">Kernel</label>
+                <select id="kernel" class="form-control">
+                    <option value="default">(default kernel)</option>
+                    {% for kernel in kernels -%}
+                    <option value="{{ kernel.name }}">{{ kernel.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="format">Format</label>
+                <select id="format" class="form-control">
+                    <option value="ipxe">iPXE Boot Script</option>
+                    <option value="uefi">UEFI Boot Loader</option>
+                    <option value="uefimg">UEFI Image</option>
+                    <option value="iso">ISO Image</option>
+                    <option value="usb">USB Image</option>
+                    <option value="krn">Kernel Only</option>
+                </select>
+            </div>
+
+            <div style="margin-bottom: 1em";>
+                <code id="target">[Click on generate when ready]</code>
+            </div>
+
+            <button type="submit" class="btn btn-primary" onclick="return generate();">Generate</button>
+            <button type="submit" class="btn btn-success" onclick="return download();" id="downbtn" disabled>Download</button>
+        </form>
+      </div>
+    </div>
+  </main>
+</body>
+
+</html>

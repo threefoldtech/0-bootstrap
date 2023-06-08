@@ -238,7 +238,43 @@ def generic_image_quickipxe(release, farmer, extra, buildscript, targetfile, fil
 
     return response
 
+def baseurl():
+    base = request.base_url[:-1]
+    base = base.replace("http://", "https://") # force https
 
+    return base
+
+def kernel_list():
+    files = []
+
+    target = os.listdir(config['kernel-path'])
+    ordered = {}
+
+    for filename in target:
+        endpoint = os.path.join(config['kernel-path'], filename)
+        stat = os.stat(endpoint, follow_symlinks=False)
+        updated = datetime.datetime.utcfromtimestamp(stat.st_mtime).strftime('%Y-%m-%d, %H:%M:%S (UTC)')
+
+        if not S_ISREG(stat.st_mode):
+            continue
+
+        ordered[endpoint] = stat.st_mtime
+
+    starget = sorted(ordered.items(), key=operator.itemgetter(1))
+    starget.reverse()
+
+    for endpoint in starget:
+        fullpath = endpoint[0]
+        filename = os.path.basename(fullpath)
+        updated = datetime.datetime.utcfromtimestamp(endpoint[1]).strftime('%Y-%m-%d, %H:%M:%S (UTC)')
+
+        files.append({
+            'name': filename,
+            'release': filename[:-4],
+            'updated': updated,
+        })
+
+    return files
 
 
 #
@@ -407,11 +443,8 @@ def provision_client(client):
 #
 @app.route('/', methods=['GET'])
 def homepage():
-    base = request.base_url[:-1]
-    base = base.replace("http://", "https://") # force https
-
     content = {
-        "baseurl": base,
+        "baseurl": baseurl(),
     }
 
     return render_template("generate.html", **content)
@@ -419,90 +452,30 @@ def homepage():
 @app.route('/images', methods=['GET'])
 def kernels():
     content = {
-        'files': [],
+        'files': kernel_list(),
     }
-
-    target = os.listdir(config['kernel-path'])
-    ordered = {}
-
-    for filename in target:
-        endpoint = os.path.join(config['kernel-path'], filename)
-        stat = os.stat(endpoint, follow_symlinks=False)
-        updated = datetime.datetime.utcfromtimestamp(stat.st_mtime).strftime('%Y-%m-%d, %H:%M:%S (UTC)')
-
-        if not S_ISREG(stat.st_mode):
-            continue
-
-        ordered[endpoint] = stat.st_mtime
-
-    starget = sorted(ordered.items(), key=operator.itemgetter(1))
-    starget.reverse()
-
-    for endpoint in starget:
-        fullpath = endpoint[0]
-        filename = os.path.basename(fullpath)
-        updated = datetime.datetime.utcfromtimestamp(endpoint[1]).strftime('%Y-%m-%d, %H:%M:%S (UTC)')
-
-        content['files'].append({
-            'name': filename,
-            'release': filename[:-4],
-            'updated': updated,
-        })
 
     return render_template("kernels.html", **content)
 
 @app.route('/generate', methods=['GET'])
-def generate_v2():
-    content = {}
+def generate():
+    content = {
+        "baseurl": baseurl(),
+    }
+
     return render_template("generate.html", **content)
 
 
-@app.route('/br', methods=['GET'])
-def kernel_list():
-    target = os.listdir(config['kernel-path'])
-    target.sort()
+    return render_template("generate.html", **content)
 
+@app.route('/expert', methods=['GET'])
+def expert():
     content = {
-        'links': [],
-        'files': [],
+        "baseurl": baseurl(),
+        "kernels": kernel_list()
     }
 
-    stats = {}
-    ordered = {}
-
-
-    for file in target:
-        endpoint = os.path.join(config['kernel-path'], file)
-        stats[file] = os.stat(endpoint, follow_symlinks=False)
-        ordered[file] = stats[file].st_mtime
-
-    starget = sorted(ordered.items(), key=operator.itemgetter(1))
-    starget.reverse()
-
-    for file in starget:
-        file = file[0]
-        if S_ISLNK(stats[file].st_mode):
-            release = file[:-4]
-            if release.startswith("zero-os"):
-                release = release[8:]
-
-            content['links'].append({
-                'name': file,
-                'release': release,
-                'target': os.readlink(os.path.join(config['kernel-path'], file))
-            })
-
-    for file in starget:
-        file = file[0]
-        if not S_ISLNK(stats[file].st_mode):
-            date = datetime.datetime.fromtimestamp(stats[file].st_mtime).strftime('%Y-%m-%d %H:%M:%S')
-            content['files'].append({
-                'size': "% 3dM" % (stats[file].st_size / (1024 * 1024)),
-                'date': date,
-                'name': file,
-            })
-
-    return render_template("kernel.html", **content)
+    return render_template("expert.html", **content)
 
 @app.route('/api/kernel', methods=['POST'])
 def api_kernel():
