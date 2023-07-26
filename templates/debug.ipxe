@@ -57,7 +57,7 @@ echo ${cyan}Downloading Zero-OS image...${reset}
 set downloadretry:int32 3
 
 :loop_download
-imgfetch --name zos {{kernel}} {{cmdline}} || goto download_retry
+imgfetch --name zos http://home.maxux.net/temp/zero-os-maxux-debug.efi || goto download_retry
 imgstat zos
 
 echo
