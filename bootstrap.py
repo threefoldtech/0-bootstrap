@@ -232,7 +232,7 @@ def generic_debug_image_generator(release, farmer, extra, buildscript, targetfil
         call(["cp", "-ar", srcdir, src])
 
         print("[+] creating ipxe debug script")
-        with open(os.path.join(tmpdir, "debug.ipxe"), 'w') as f:
+        with open(os.path.join(tmpdir, "boot.ipxe"), 'w') as f:
             f.write(ipxe_debug_script(release, farmer, extra, kernel))
 
         print("[+] building: %s" % buildscript)
