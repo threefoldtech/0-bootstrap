@@ -88,6 +88,41 @@ def ipxe_script(release, farmer, extra="", source=None):
 
     return render_template("boot.ipxe", **settings)
 
+# Debug cycle ipxe script
+def ipxe_debug_script(release, farmer, extra="", source=None):
+    if not source:
+        source = 'zero-os-development-zos-v3-generic.efi'
+
+    kernel = os.path.join(config['kernel-path'], source)
+
+    if release not in config['runmodes'].keys():
+        abort(401)
+
+    if not os.path.exists(kernel):
+        abort(404)
+
+    kernel_secure = "%s://%s/kernel/%s" % (get_protocol(), request.host, source)
+    kernel_simple = "http://unsecure.%s/kernel/%s" % (request.host, source)
+
+    chain = "nomodeset version=v3 runmode=%s panic=7200" % release
+
+    if farmer:
+        chain += " farmer_id=%s" % farmer
+
+    if extra:
+        chain += " " + extra.replace("___", "/")
+
+    settings = {
+        "release": config['runmodes'][release],
+        "farmerid": farmer,
+        "parameters": extra,
+        "kernel": kernel_secure,
+        "cmdline": chain,
+    }
+
+    return render_template("debug.ipxe", **settings)
+
+
 # No network setup script
 # Used for provision clients which have already network setup
 # by provision image
@@ -173,6 +208,32 @@ def generic_image_generator(release, farmer, extra, buildscript, targetfile, fil
         print("[+] creating ipxe script")
         with open(os.path.join(tmpdir, "boot.ipxe"), 'w') as f:
             f.write(ipxe_script(release, farmer, extra, kernel))
+
+        print("[+] building: %s" % buildscript)
+        script = os.path.join(BASEPATH, "scripts", buildscript)
+        call(["bash", script, tmpdir])
+
+        filecontents = ""
+        with open(os.path.join(tmpdir, targetfile), 'rb') as f:
+            filecontents = f.read()
+
+        response = download_mkresponse(filecontents, filename)
+
+    return response
+
+def generic_debug_image_generator(release, farmer, extra, buildscript, targetfile, filename, kernel=None):
+    response = make_response("Request failed")
+    srcdir = srcdir_from_filename(targetfile)
+
+    with tempfile.TemporaryDirectory() as tmpdir:
+        src = os.path.join(tmpdir, "src")
+
+        print("[+] copying template: %s > %s" % (srcdir, src))
+        call(["cp", "-ar", srcdir, src])
+
+        print("[+] creating ipxe debug script")
+        with open(os.path.join(tmpdir, "debug.ipxe"), 'w') as f:
+            f.write(ipxe_debug_script(release, farmer, extra, kernel))
 
         print("[+] building: %s" % buildscript)
         script = os.path.join(BASEPATH, "scripts", buildscript)
@@ -394,6 +455,12 @@ def uefimg_release_farmer_extra(release, farmer, extra):
 def uefimg_release_farmer_extra_kernel(release, farmer, extra, kernel):
     print("[+] release: %s, network: %s, extra: %s [kernel: %s]" % (release, farmer, extra, kernel))
     return generic_image_generator(release, farmer, extra, "mkuefimg.sh", "uefimg.img", "uefiusb-%s.img" % release, kernel)
+
+
+
+@app.route('/debug/<release>/<farmer>', methods=['GET'])
+def uefimg_debug_release(release, farmer):
+    return generic_debug_image_generator(release, farmer, "", "mkuefimg.sh", "uefimg.img", "uefiusb-debug.img")
 
 
 
