@@ -56,7 +56,7 @@ def get_protocol():
 # Full cycle ipxe script
 def ipxe_script(release, farmer, extra="", source=None):
     if not source:
-        source = 'zero-os-development-zos-v3-generic.efi'
+        source = 'net/%s.efi' % release
 
     kernel = os.path.join(config['kernel-path'], source)
 
@@ -91,7 +91,7 @@ def ipxe_script(release, farmer, extra="", source=None):
 # Debug cycle ipxe script
 def ipxe_debug_script(release, farmer, extra="", source=None):
     if not source:
-        source = 'zero-os-development-zos-v3-generic.efi'
+        source = 'net/%s.efi' % release
 
     kernel = os.path.join(config['kernel-path'], source)
 
