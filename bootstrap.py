@@ -178,6 +178,11 @@ def download(filename):
     print("[+] downloading: %s" % filename)
     return send_from_directory(directory=config['kernel-path'], filename=filename)
 
+@app.route('/kernel/net/<path:filename>', methods=['GET'])
+def download_net(filename):
+    print("[+] downloading (network based): %s" % filename)
+    return send_from_directory(directory=config['kernel-net-path'], filename=filename)
+
 #
 # Generic Image Generator
 #
