@@ -359,6 +359,12 @@ def iso_release_farmer_extra(release, farmer, extra):
     print("[+] release: %s, network: %s, extra: %s" % (release, farmer, extra))
     return generic_image_generator(release, farmer, extra, "mkiso.sh", "ipxe.iso", "ipxe-%s.iso" % release)
 
+@app.route('/iso/<release>/<farmer>/<extra>/<kernel>', methods=['GET'])
+def iso_release_farmer_extra_kernel(release, farmer, extra, kernel):
+    print("[+] release: %s, network: %s, extra: %s [kernel: %s]" % (release, farmer, extra, kernel))
+    return generic_image_generator(release, farmer, extra, "mkiso.sh", "ipxe.iso", "ipxe-%s.iso" % release, kernel)
+
+
 @app.route('/usb/<release>', methods=['GET'])
 def usb_release(release):
     return usb_release_farmer_extra(release, "", "")
