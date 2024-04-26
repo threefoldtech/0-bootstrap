@@ -9,7 +9,7 @@ import operator
 import sqlite3
 from subprocess import call
 from stat import *
-from flask import Flask, request, redirect, url_for, render_template, abort, Markup, make_response, send_from_directory
+from flask import Flask, request, redirect, url_for, render_template, abort, make_response, send_from_directory
 from werkzeug.utils import secure_filename
 from werkzeug.middleware.proxy_fix import ProxyFix
 from config import config
