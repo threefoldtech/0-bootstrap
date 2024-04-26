@@ -35,7 +35,7 @@ function update_trigger(initialAllValid) {
     }
 
     // the fid (farmer id) may only contain integers 0-9
-    if(! regex.test(fid)) {
+    if(!regex.test(fid)) {
         $('#farmerid-cleared').html("Invalid");
         return farmerid_invalid();
     }
