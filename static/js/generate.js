@@ -6,6 +6,7 @@ var finalUrl = '...';
 
 var tfmodes = {"prod": "success", "test": "warning", "dev": "danger", "qa": "info"};
 var tfmode = "prod";
+var farmId = undefined;
 
 function farmerid_invalid() {
     allValid = false;
@@ -25,30 +26,63 @@ function farmerid_valid() {
 }
 
 function update_trigger(initialAllValid) {
-    var fid = $("#farmerid").val();
+    const regex = /^\d+$/;
+    const fid = $("#farmerid").val();
 
-    // farmer id needs to be a positive non null integer with no coma or dot
-    // check related to issue #4
-    fid = fid.split('.').join("").split(',').join("");
-
-    if(/\D/.test(fid)) {
-        $('#farmerid-cleared').html("Invalid");
-        return farmerid_invalid();
-    }
-
-    if(fid == "") {
+    if(fid === "") {
         $('#farmerid-cleared').html("Missing");
         return farmerid_invalid();
     }
 
-    fid = parseInt(fid);
+    // the fid (farmer id) may only contain integers 0-9
+    if(! regex.test(fid)) {
+        $('#farmerid-cleared').html("Invalid");
+        return farmerid_invalid();
+    }
 
-    $('#farmerid-cleared').html(fid);
+    let id = parseInt(fid)
 
-    if(Number.isInteger(fid) && fid > 0)
-        return farmerid_valid();
+    getFarm(id)
+        .then(name => {
+            if (name === "") {
+                $('#farmerid-cleared').html("Non-existent");
+                return farmerid_invalid();
+            } else {
+                $('#farmerid-cleared').html(name);
+                farmId = id; // save the farm id
+                return farmerid_valid();
+            }
+        })
+        .catch(error => {
+            console.error(error);
+            $('#farmerid-cleared').html("error");
+            return farmerid_invalid();
+        });
 
-    return farmerid_invalid();
+}
+
+async function getFarm(fid) {
+    const endpoint = 'https://graphql.grid.tf/graphql';
+
+    const response = await fetch(endpoint, {
+        method: 'POST',
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            query: `
+            query MyQuery($fid: Int!) {
+            farms(where: {farmID_eq: $fid }) {
+                 name
+                }
+            }`,
+            variables: { fid }
+        })
+    });
+
+    const data = await response.json();
+    let farms = data.data.farms
+    return (farms.length === 0) ? "" : farms[0].name
 }
 
 function update_url() {
@@ -65,7 +99,8 @@ function update_url() {
     $("#jumbofinal").removeClass('jumbo-nok');
     $("#jumbofinal").addClass('jumbo-ok');
 
-    var userurl = '/' + tfmode + '/' + $("#farmerid-cleared").html();
+    // instead of using .html to get the value, retrieve it from the var
+    var userurl = '/' + tfmode + '/' + String(farmId)
 
     finalUrl = userurl;
     $('#userurl').html(userurl);

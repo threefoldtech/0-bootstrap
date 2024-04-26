@@ -33,7 +33,7 @@ Target can be one of the following, to specify in which environment kernel boots
 - `dev`: devnet environment
 - `qa`: quality-assurance special dedicated network
 
-Theses network are configurable via the `config.py` file. The dictionnary pointed by `runmode` should contains
+These networks are configurable via the `config.py` file. The dictionary pointed by `runmode` should contain
 a short keyword and define a long pretty name.
 
 Any [argument] are optional, but are ordered and dependants (eg: you cannot provide extra argument without providing farmer-id network)

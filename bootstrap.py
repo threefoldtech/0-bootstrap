@@ -15,7 +15,7 @@ from werkzeug.middleware.proxy_fix import ProxyFix
 from config import config
 
 #
-# Theses location should works out-of-box if you use default settings
+# These locations should works out-of-box if you use default settings
 #
 thispath = os.path.dirname(os.path.realpath(__file__))
 BASEPATH = os.path.join(thispath)
