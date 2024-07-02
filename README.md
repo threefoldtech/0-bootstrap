@@ -36,6 +36,13 @@ Target can be one of the following, to specify in which environment kernel boots
 These networks are configurable via the `config.py` file. The dictionary pointed by `runmode` should contain
 a short keyword and define a long pretty name.
 
+By default, theses default network have new links inside `kernel-net-path` config location. This directory should contains files
+called `prod.efi`, `test.efi`, `dev.efi` and `qa.efi`. Theses files will be used as default kernel per network.
+
+> This introduce flexibility about kernel update and allow different kernel to serve differents network, so 'testnet' can use a test
+kernel while 'prod' stay stable. In order to update kernel, it's easy when using symlinks (`prod.efi` can -and should- be a symlink to the
+current kernel version).
+
 Any [argument] are optional, but are ordered and dependants (eg: you cannot provide extra argument without providing farmer-id network)
 
 Theses are valid endpoint example:

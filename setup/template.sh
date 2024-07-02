@@ -1,6 +1,7 @@
 #!/bin/bash
 set -e
 
+kernels="/tmp/kernels"
 template="/opt/ipxe-template"
 templateuefi="/opt/ipxe-template-uefi"
 makeopts="-j 10"
@@ -52,7 +53,19 @@ echo "[+] installing templates"
 cp -ar ipxe-legacy/src ${template}
 cp -ar ipxe-uefi/src ${templateuefi}
 
+echo "[+] building initial kernel directories"
+mkdir -p ${kernels}
+mkdir -p ${kernels}/net
+
+echo "YOU SHOULD REPLACE THIS BY A REAL KERNEL" > ${kernels}/zero-os-demo-file-wont-boot.efi
+
+cd ${kernels}/net
+for net in prod.efi qa.efi test.efi dev.efi; do
+    ln -s ../zero-os-demo-file-wont-boot.efi ${net}
+done
+
 echo "[+] ================================================================"
 echo "[+] ipxe legacy template installed on: ${template}"
 echo "[+] ipxe uefi template installed on: ${templateuefi}"
+echo "[+] default kernels location: ${kernels}"
 echo "[+] ================================================================"
