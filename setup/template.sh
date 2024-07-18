@@ -33,7 +33,7 @@ cp -r ipxe ipxe-uefi
 
 echo "[+] pre-compiling: ipxe-legacy"
 pushd ipxe-legacy/src
-echo "#!ipxe" > boot.ipxe
+echo '#!ipxe' > boot.ipxe
 make ${makeopts} bin/ipxe.iso EMBED=$(pwd)/boot.ipxe CERT=${mkcert} TRUST=${mktrust}
 make ${makeopts} bin/ipxe.usb EMBED=$(pwd)/boot.ipxe CERT=${mkcert} TRUST=${mktrust}
 make ${makeopts} bin/ipxe.lkrn EMBED=$(pwd)/boot.ipxe CERT=${mkcert} TRUST=${mktrust}
@@ -41,7 +41,7 @@ popd
 
 echo "[+] pre-compiling: ipxe-uefi"
 pushd ipxe-uefi/src
-echo "#!ipxe" > boot.ipxe
+echo '#!ipxe' > boot.ipxe
 make ${makeopts} bin-x86_64-efi/ipxe.efi EMBED=$(pwd)/boot.ipxe CERT=${mkcert} TRUST=${mktrust}
 popd
 
