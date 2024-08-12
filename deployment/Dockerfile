@@ -9,7 +9,7 @@ RUN apt-get update && \
         libssl-dev python3-pip python3-requests python3-nacl \
         wget sqlite3 \
         syslinux liblzma-dev libz-dev genisoimage \
-        isolinux dosfstools udev
+        isolinux dosfstools udev parted
 
 RUN git clone https://github.com/threefoldtech/0-bootstrap /bootstrap
 
