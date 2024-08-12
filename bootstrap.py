@@ -9,7 +9,7 @@ import operator
 import sqlite3
 from subprocess import call
 from stat import *
-from flask import Flask, request, redirect, url_for, render_template, abort, make_response, send_from_directory
+from flask import Flask, request, redirect, url_for, render_template, abort, make_response, send_from_directory, jsonify
 from werkzeug.utils import secure_filename
 from werkzeug.middleware.proxy_fix import ProxyFix
 from config import config
@@ -317,6 +317,9 @@ def kernel_list():
     ordered = {}
 
     for filename in target:
+        if filename.startswith("."):
+            continue
+
         endpoint = os.path.join(config['kernel-path'], filename)
         stat = os.stat(endpoint, follow_symlinks=False)
         updated = datetime.datetime.utcfromtimestamp(stat.st_mtime).strftime('%Y-%m-%d, %H:%M:%S (UTC)')
@@ -338,6 +341,7 @@ def kernel_list():
             'name': filename,
             'release': filename[:-4],
             'updated': updated,
+            'timestamp': int(endpoint[1]),
         })
 
     return files
@@ -543,9 +547,6 @@ def generate():
 
     return render_template("generate.html", **content)
 
-
-    return render_template("generate.html", **content)
-
 @app.route('/expert', methods=['GET'])
 def expert():
     content = {
@@ -554,6 +555,10 @@ def expert():
     }
 
     return render_template("expert.html", **content)
+
+@app.route('/api/images', methods=['GET'])
+def api_kernels():
+    return jsonify(kernel_list())
 
 @app.route('/api/kernel', methods=['POST'])
 def api_kernel():
