@@ -54,7 +54,7 @@ def get_protocol():
     return 'https'
 
 # Full cycle ipxe script
-def ipxe_script(release, farmer, extra="", source=None):
+def ipxe_script(release, farmer, extra="", source=None, version="v3"):
     if not source:
         source = 'net/%s.efi' % release
 
@@ -69,10 +69,10 @@ def ipxe_script(release, farmer, extra="", source=None):
     kernel_secure = "%s://%s/kernel/%s" % (get_protocol(), request.host, source)
     kernel_simple = "http://unsecure.%s/kernel/%s" % (request.host, source)
 
-    chain = "nomodeset version=v3 runmode=%s panic=7200" % release
+    chain = f"nomodeset version={version} runmode={release} panic=7200"
 
     if farmer:
-        chain += " farmer_id=%s" % farmer
+        chain += f" farmer_id={farmer}"o
 
     if extra:
         chain += " " + extra.replace("___", "/")
@@ -200,7 +200,7 @@ def download_mkresponse(data, filename):
 
     return response
 
-def generic_image_generator(release, farmer, extra, buildscript, targetfile, filename, kernel=None):
+def generic_image_generator(release, farmer, extra, buildscript, targetfile, filename, kernel=None, v="v3"):
     response = make_response("Request failed")
     srcdir = srcdir_from_filename(targetfile)
 
@@ -212,7 +212,7 @@ def generic_image_generator(release, farmer, extra, buildscript, targetfile, fil
 
         print("[+] creating ipxe script")
         with open(os.path.join(tmpdir, "boot.ipxe"), 'w') as f:
-            f.write(ipxe_script(release, farmer, extra, kernel))
+            f.write(ipxe_script(release, farmer, extra, kernel, v))
 
         print("[+] building: %s" % buildscript)
         script = os.path.join(BASEPATH, "scripts", buildscript)
@@ -278,7 +278,7 @@ def generic_image_provision(buildscript, targetfile, filename):
 
     return response
 
-def generic_image_quickipxe(release, farmer, extra, buildscript, targetfile, filename):
+def generic_image_quickipxe(release, farmer, extra, buildscript, targetfile, filename, v="v3"):
     response = make_response("Request failed")
     srcdir = srcdir_from_filename(targetfile)
 
@@ -290,7 +290,7 @@ def generic_image_quickipxe(release, farmer, extra, buildscript, targetfile, fil
 
         print("[+] creating ipxe script")
         with open(os.path.join(tmpdir, "boot.ipxe"), 'w') as f:
-            f.write(ipxe_script(release, farmer, extra))
+            f.write(ipxe_script(release, farmer, extra, None, v))
 
         print("[+] building: " % buildscript)
         script = os.path.join(BASEPATH, "scripts", buildscript)
@@ -496,6 +496,12 @@ def ipxe_release_farmer_extra(release, farmer, extra):
 def ipxe_release_farmer_extra_kernel(release, farmer, extra, kernel):
     print("[+] release: %s, network: %s, extra: %s [kernel: %s]" % (release, farmer, extra, kernel))
     return text_reply(ipxe_script(release, farmer, extra, kernel))
+
+
+@app.route('/v4/ipxe/<release>/<farmer>/<extra>', methods=['GET'])
+def v4_ipxe_release_farmer_extra(release, farmer, extra):
+    print("[+] v4 / release: %s, network: %s, extra: %s" % (release, farmer, extra))
+    return text_reply(ipxe_script(release, farmer, extra, None, "v4"))
 
 
 
