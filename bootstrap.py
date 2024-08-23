@@ -69,10 +69,10 @@ def ipxe_script(release, farmer, extra="", source=None, version="v3"):
     kernel_secure = "%s://%s/kernel/%s" % (get_protocol(), request.host, source)
     kernel_simple = "http://unsecure.%s/kernel/%s" % (request.host, source)
 
-    chain = f"nomodeset version={version} runmode={release} panic=7200"
+    chain = "nomodeset version=%s runmode=%s panic=7200" % (version, release)
 
     if farmer:
-        chain += f" farmer_id={farmer}"
+        chain += f" farmer_id=%s" % farmer
 
     if extra:
         chain += " " + extra.replace("___", "/")
