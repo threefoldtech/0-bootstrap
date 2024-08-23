@@ -72,7 +72,7 @@ def ipxe_script(release, farmer, extra="", source=None, version="v3"):
     chain = "nomodeset version=%s runmode=%s panic=7200" % (version, release)
 
     if farmer:
-        chain += f" farmer_id=%s" % farmer
+        chain += " farmer_id=%s" % farmer
 
     if extra:
         chain += " " + extra.replace("___", "/")
