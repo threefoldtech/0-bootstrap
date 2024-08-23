@@ -498,6 +498,13 @@ def ipxe_release_farmer_extra_kernel(release, farmer, extra, kernel):
     return text_reply(ipxe_script(release, farmer, extra, kernel))
 
 
+#
+# v4 debug
+#
+@app.route('/v4/uefimg/<release>/<farmer>', methods=['GET'])
+def v4_uefimg_release_farmer(release, farmer):
+    return generic_image_generator(release, farmer, "", "mkuefimg.sh", "uefimg.img", "uefiusb-%s.img" % release, None, "v4")
+
 @app.route('/v4/ipxe/<release>/<farmer>/<extra>', methods=['GET'])
 def v4_ipxe_release_farmer_extra(release, farmer, extra):
     print("[+] v4 / release: %s, network: %s, extra: %s" % (release, farmer, extra))
