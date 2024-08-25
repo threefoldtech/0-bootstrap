@@ -214,7 +214,7 @@ def generic_image_generator(release, farmer, extra, buildscript, targetfile, fil
 
         print("[+] creating ipxe script")
         with open(os.path.join(tmpdir, "boot.ipxe"), 'w') as f:
-            f.write(ipxe_script(release, farmer, extra, kernel, v))
+            f.write(ipxe_script(release, farmer, extra, kernel))
 
         print("[+] building: %s" % buildscript)
         script = os.path.join(BASEPATH, "scripts", buildscript)
@@ -292,7 +292,7 @@ def generic_image_quickipxe(release, farmer, extra, buildscript, targetfile, fil
 
         print("[+] creating ipxe script")
         with open(os.path.join(tmpdir, "boot.ipxe"), 'w') as f:
-            f.write(ipxe_script(release, farmer, extra, None, v))
+            f.write(ipxe_script(release, farmer, extra, None))
 
         print("[+] building: " % buildscript)
         script = os.path.join(BASEPATH, "scripts", buildscript)
