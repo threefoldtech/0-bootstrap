@@ -54,7 +54,7 @@ def get_protocol():
     return 'https'
 
 # Full cycle ipxe script
-def ipxe_script(release, farmer, extra="", source=None, version="v3"):
+def ipxe_script(release, farmer, extra="", source=None):
     if not source:
         source = 'net/%s.efi' % release
 
@@ -68,6 +68,8 @@ def ipxe_script(release, farmer, extra="", source=None, version="v3"):
 
     kernel_secure = "%s://%s/kernel/%s" % (get_protocol(), request.host, source)
     kernel_simple = "http://unsecure.%s/kernel/%s" % (request.host, source)
+
+    version = request.args.get("version", "v3")
 
     chain = "nomodeset version=%s runmode=%s panic=7200" % (version, release)
 
@@ -200,7 +202,7 @@ def download_mkresponse(data, filename):
 
     return response
 
-def generic_image_generator(release, farmer, extra, buildscript, targetfile, filename, kernel=None, v="v3"):
+def generic_image_generator(release, farmer, extra, buildscript, targetfile, filename, kernel=None):
     response = make_response("Request failed")
     srcdir = srcdir_from_filename(targetfile)
 
@@ -278,7 +280,7 @@ def generic_image_provision(buildscript, targetfile, filename):
 
     return response
 
-def generic_image_quickipxe(release, farmer, extra, buildscript, targetfile, filename, v="v3"):
+def generic_image_quickipxe(release, farmer, extra, buildscript, targetfile, filename):
     response = make_response("Request failed")
     srcdir = srcdir_from_filename(targetfile)
 
@@ -496,20 +498,6 @@ def ipxe_release_farmer_extra(release, farmer, extra):
 def ipxe_release_farmer_extra_kernel(release, farmer, extra, kernel):
     print("[+] release: %s, network: %s, extra: %s [kernel: %s]" % (release, farmer, extra, kernel))
     return text_reply(ipxe_script(release, farmer, extra, kernel))
-
-
-#
-# v4 debug
-#
-@app.route('/v4/uefimg/<release>/<farmer>', methods=['GET'])
-def v4_uefimg_release_farmer(release, farmer):
-    return generic_image_generator(release, farmer, "", "mkuefimg.sh", "uefimg.img", "uefiusb-%s.img" % release, None, "v4")
-
-@app.route('/v4/ipxe/<release>/<farmer>/<extra>', methods=['GET'])
-def v4_ipxe_release_farmer_extra(release, farmer, extra):
-    print("[+] v4 / release: %s, network: %s, extra: %s" % (release, farmer, extra))
-    return text_reply(ipxe_script(release, farmer, extra, None, "v4"))
-
 
 
 @app.route('/provision/<client>')
