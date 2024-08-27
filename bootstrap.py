@@ -178,12 +178,12 @@ def text_reply(payload):
 @app.route('/kernel/<path:filename>', methods=['GET'])
 def download(filename):
     print("[+] downloading: %s" % filename)
-    return send_from_directory(directory=config['kernel-path'], filename=filename)
+    return send_from_directory(config['kernel-path'], filename)
 
 @app.route('/kernel/net/<path:filename>', methods=['GET'])
 def download_net(filename):
     print("[+] downloading (network based): %s" % filename)
-    return send_from_directory(directory=config['kernel-net-path'], filename=filename)
+    return send_from_directory(config['kernel-net-path'], filename)
 
 #
 # Generic Image Generator
