@@ -42,9 +42,11 @@
           <li class="nav-item">
             <a class="nav-link" href="/images">Images list</a>
           </li>
+          <!--
           <li class="nav-item">
             <a class="nav-link" href="/expert">Expert mode</a>
           </li>
+          -->
         </ul>
       </div>
     </div>
@@ -53,12 +55,12 @@
   <main role="main">
     <div class="jumbotron">
       <div class="container">
-        <h1 class="display-3">Zero-OS <span class="text-danger">v3</span> Bootstrapping</h1>
+        <h1 class="display-3">Zero-OS <strong class="text-danger">v4</strong> Bootstrapping</h1>
         <p>
           Welcome to the Zero-OS Boot Generator Assistant which will helps you to generate your own
           boot device for your system. Please follow the next steps.
 
-          These steps will guide you to setup a boot device ready to use <strong>Zero-OS v3</strong>.
+          These steps will guide you to setup a boot device ready to use <strong>Zero-OS v4</strong>.
         </p>
       </div>
     </div>
@@ -97,10 +99,10 @@
 
         <p>Zero-OS comes by default with 4 different <code>running modes</code>. Each mode has its own settings,
           own network and own purpose.<br>
-          Please choose the release you want.</p>
+          For this <strong>v4 release</strong> right now, only one network is available, more will arrives soon !</p>
 
         <div class="card-deck mb-3">
-          <div class="card mb-3 shadow-sm border-success tf-card tf-card-selected" id="tf-runmode-prod">
+          <div class="card mb-3 shadow-sm border-success tf-card tf-card-disabled" id="tf-runmode-prod">
             <div class="card-header bg-success">
               <h4 class="my-0 font-weight-normal text-center">Main Network</h4>
             </div>
@@ -113,25 +115,20 @@
 
             </div>
             <div class="card-footer bg-white">
-              <button type="button" class="btn btn-lg btn-block btn-success" onclick="setmode('prod');">Go live</button>
+              <button disabled type="button" class="btn btn-lg btn-block btn-success" onclick="setmode('prod');">
+                  <!-- Go live -->
+                  Coming Soon
+              </button>
             </div>
           </div>
-          <div class="card mb-3 shadow-sm border-warning tf-card" id="tf-runmode-test">
+
+          <div class="card mb-3 shadow-sm border-warning tf-card tf-card-disabled" id="tf-runmode-test">
             <div class="card-header bg-warning">
               <h4 class="my-0 font-weight-normal text-center">Test Network</h4>
             </div>
             <div class="card-body">
               <h5 class="card-title text-center">Make it bulletproof</h5>
 
-              <!--
-              <p>Before sending release over the real world, we want to ensure everything is bulletproof,
-                rock solid and tested a lot. Averyy release we make before going in production, goes into this
-                testing release and uses the same settings as production but on a separate network to
-                not interfere with the real world.</p>
-
-              <p>These releases are made for people who want to test the
-                system and help the community to improve the system.</p>
-              -->
               <p>Yaaay, you were waiting for this, it's now available for our grid version 3 !</p>
 
               <p>The test network is the way to go if you want to enjoy features of our version 3 release
@@ -141,12 +138,14 @@
 
             </div>
             <div class="card-footer bg-white">
-              <button type="button" class="btn btn-lg btn-block btn-warning" onclick="setmode('test');">
-                  Let's test
+              <button disabled type="button" class="btn btn-lg btn-block btn-warning" onclick="setmode('test');">
+                  <!-- Let's test -->
+                  Coming Soon
               </button>
             </div>
           </div>
-          <div class="card mb-3 shadow-sm border-danger tf-card" id="tf-runmode-dev">
+
+          <div class="card mb-3 shadow-sm border-danger tf-card tf-card-selected" id="tf-runmode-dev">
             <div class="card-header bg-danger">
               <h4 class="my-0 font-weight-normal text-center">Dev Network</h4>
             </div>
@@ -157,15 +156,6 @@
               real decentralization and lots of new features, but it's still in an early stage.</p>
 
               <p>Thank you to join this next release but keep in mind this is really not stable yet.</p>
-
-              <!--
-              <p>Our developers never stop to improve and add features to Zero-OS to make it even better.
-                As soon as something has to be tested, this is done in development mode. This mode is the most
-                unstable, but up-to-date, used to test and continuously develop the operating system.</p>
-
-              <p>You should use a development release only if you're developer or if someone told you
-                to use this for specific reasons.</p>
-              -->
             </div>
             <div class="card-footer bg-white">
               <button type="button" class="btn btn-lg btn-block btn-danger" onclick="setmode('dev');">
@@ -173,7 +163,8 @@
               </button>
             </div>
           </div>
-          <div class="card mb-3 shadow-sm border-info tf-card" id="tf-runmode-qa">
+
+          <div class="card mb-3 shadow-sm border-info tf-card tf-card-disabled" id="tf-runmode-qa">
             <div class="card-header bg-info">
               <h4 class="my-0 font-weight-normal text-center">QA Network</h4>
             </div>
@@ -186,11 +177,13 @@
 
             </div>
             <div class="card-footer bg-white">
-              <button type="button" class="btn btn-lg btn-block btn-info" onclick="setmode('qa');">
-                  Go QA
+              <button disabled type="button" class="btn btn-lg btn-block btn-info" onclick="setmode('qa');">
+                  <!-- Go QA -->
+                  Coming Soon
               </button>
             </div>
           </div>
+
         </div>
 
       </div>

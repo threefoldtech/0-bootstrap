@@ -5,7 +5,7 @@ var buildlist = ['ipxe', 'iso', 'usb', 'uefi', 'uefimg', 'krn'];
 var finalUrl = '...';
 
 var tfmodes = {"prod": "success", "test": "warning", "dev": "danger", "qa": "info"};
-var tfmode = "prod";
+var tfmode = "dev";
 var farmId = undefined;
 
 function farmerid_invalid() {
@@ -62,6 +62,7 @@ function update_trigger(initialAllValid) {
 }
 
 async function getFarm(fid) {
+    /*
     const endpoint = 'https://graphql.grid.tf/graphql';
 
     const response = await fetch(endpoint, {
@@ -83,6 +84,9 @@ async function getFarm(fid) {
     const data = await response.json();
     let farms = data.data.farms
     return (farms.length === 0) ? "" : farms[0].name
+    */
+
+    return "Valid";
 }
 
 function update_url() {

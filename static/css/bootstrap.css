@@ -22,6 +22,14 @@ body {
     opacity: 1;
 }
 
+.tf-card-disabled, .tf-card-disabled:hover {
+    opacity: 0.2;
+}
+
+.tf-card-disabled .card-body {
+    filter: blur(5px);
+}
+
 /* custom fonts */
 h1, h2, h3, h4, h5 {
     font-family: 'Raleway', sans-serif;
