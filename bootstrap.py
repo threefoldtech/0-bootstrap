@@ -6,7 +6,6 @@ import tempfile
 import shutil
 import datetime
 import operator
-import sqlite3
 from subprocess import call
 from stat import *
 from flask import Flask, request, redirect, url_for, render_template, abort, make_response, send_from_directory, jsonify
@@ -22,27 +21,6 @@ BASEPATH = os.path.join(thispath)
 
 app = Flask(__name__, static_url_path='/static')
 app.url_map.strict_slashes = False
-
-#
-# Database
-#
-def db_open():
-    return sqlite3.connect(config['bootstrap-db'])
-
-def db_check():
-    db = db_open()
-
-    # sanity check
-    try:
-        c = db.cursor()
-        c.execute("SELECT COUNT(*) FROM provision")
-        db.close()
-
-    except sqlite3.OperationalError:
-        print("[-] database not initialized, please check installation steps")
-        sys.exit(1)
-
-db_check()
 
 #
 # Helpers
@@ -89,82 +67,6 @@ def ipxe_script(release, farmer, extra="", source=None):
     }
 
     return render_template("boot.ipxe", **settings)
-
-# Debug cycle ipxe script
-def ipxe_debug_script(release, farmer, extra="", source=None):
-    if not source:
-        source = 'net/%s.efi' % release
-
-    kernel = os.path.join(config['kernel-path'], source)
-
-    if release not in config['runmodes'].keys():
-        abort(401)
-
-    if not os.path.exists(kernel):
-        abort(404)
-
-    kernel_secure = "%s://%s/kernel/%s" % (get_protocol(), request.host, source)
-    kernel_simple = "http://unsecure.%s/kernel/%s" % (request.host, source)
-
-    chain = "nomodeset version=v3 runmode=%s panic=7200" % release
-
-    if farmer:
-        chain += " farmer_id=%s" % farmer
-
-    if extra:
-        chain += " " + extra.replace("___", "/")
-
-    settings = {
-        "release": config['runmodes'][release],
-        "farmerid": farmer,
-        "parameters": extra,
-        "kernel": kernel_secure,
-        "cmdline": chain,
-    }
-
-    return render_template("debug.ipxe", **settings)
-
-
-# No network setup script
-# Used for provision clients which have already network setup
-# by provision image
-def ipxe_quick_script(release, farmer, extra=""):
-    source = 'zero-os-development-zos-v2-generic.efi'
-    kernel = os.path.join(config['kernel-path'], source)
-
-    if release not in config['runmodes'].keys():
-        abort(401)
-
-    if not os.path.exists(kernel):
-        abort(404)
-
-    kernel = "%s://%s/kernel/%s" % (get_protocol(), request.host, source)
-    cmdline = "nomodeset runmode=%s" % release
-
-    if farmer:
-        cmdline += " farmer_id=%s" % farmer
-
-    if extra:
-        cmdline += " " + extra
-
-    settings = {
-        "release": config['runmodes'][release],
-        "parameters": extra,
-        "kernel": kernel,
-        "cmdline": cmdline,
-    }
-
-    return render_template("boot-quick.ipxe", **settings)
-
-# Provisioning image requesting configuration on runtime
-def ipxe_provision():
-    url = "%s://%s/provision/${net${idx}/mac}" % (get_protocol(), request.host)
-    settings = {
-        "url": url,
-    }
-
-    return render_template("boot-provision.ipxe", **settings)
-
 
 def text_reply(payload):
     response = make_response(payload)
@@ -215,58 +117,6 @@ def generic_image_generator(release, farmer, extra, buildscript, targetfile, fil
         print("[+] creating ipxe script")
         with open(os.path.join(tmpdir, "boot.ipxe"), 'w') as f:
             f.write(ipxe_script(release, farmer, extra, kernel))
-
-        print("[+] building: %s" % buildscript)
-        script = os.path.join(BASEPATH, "scripts", buildscript)
-        call(["bash", script, tmpdir])
-
-        filecontents = ""
-        with open(os.path.join(tmpdir, targetfile), 'rb') as f:
-            filecontents = f.read()
-
-        response = download_mkresponse(filecontents, filename)
-
-    return response
-
-def generic_debug_image_generator(release, farmer, extra, buildscript, targetfile, filename, kernel=None):
-    response = make_response("Request failed")
-    srcdir = srcdir_from_filename(targetfile)
-
-    with tempfile.TemporaryDirectory() as tmpdir:
-        src = os.path.join(tmpdir, "src")
-
-        print("[+] copying template: %s > %s" % (srcdir, src))
-        call(["cp", "-ar", srcdir, src])
-
-        print("[+] creating ipxe debug script")
-        with open(os.path.join(tmpdir, "boot.ipxe"), 'w') as f:
-            f.write(ipxe_debug_script(release, farmer, extra, kernel))
-
-        print("[+] building: %s" % buildscript)
-        script = os.path.join(BASEPATH, "scripts", buildscript)
-        call(["bash", script, tmpdir])
-
-        filecontents = ""
-        with open(os.path.join(tmpdir, targetfile), 'rb') as f:
-            filecontents = f.read()
-
-        response = download_mkresponse(filecontents, filename)
-
-    return response
-
-def generic_image_provision(buildscript, targetfile, filename):
-    response = make_response("Request failed")
-    srcdir = srcdir_from_filename(targetfile)
-
-    with tempfile.TemporaryDirectory() as tmpdir:
-        src = os.path.join(tmpdir, "src")
-
-        print("[+] copying template: %s > %s" % (srcdir, src))
-        call(["cp", "-ar", srcdir, src])
-
-        print("[+] creating ipxe script")
-        with open(os.path.join(tmpdir, "boot.ipxe"), 'w') as f:
-            f.write(ipxe_provision())
 
         print("[+] building: %s" % buildscript)
         script = os.path.join(BASEPATH, "scripts", buildscript)
@@ -391,28 +241,6 @@ def usb_release_farmer_extra_kernel(release, farmer, extra, kernel):
 
 
 
-@app.route('/krn-generic', methods=['GET'])
-def krn_generic():
-    print("[+] generic ipxe kernel")
-    return generic_image_provision("mkkrn-generic.sh", "ipxe.lkrn", "ipxe-zero-os-generic.lkrn")
-
-@app.route('/uefi-generic', methods=['GET'])
-def uefi_generic():
-    print("[+] generic uefi ipxe")
-    return generic_image_provision("mkuefi-generic.sh", "ipxe.efi", "ipxe-zero-os-generic.efi")
-
-
-@app.route('/krn-provision', methods=['GET'])
-def krn_provision():
-    print("[+] provision ipxe kernel")
-    return generic_image_quickipxe("mkkrn.sh", "ipxe.lkrn", "ipxe-zero-os-provision.lkrn")
-
-@app.route('/uefi-provision', methods=['GET'])
-def uefi_provision():
-    print("[+] provisioning uefi ipxe")
-    return generic_image_quickipxe("mkuefi.sh", "ipxe.efi", "ipxe-zero-os-provision.efi")
-
-
 @app.route('/krn/<release>', methods=['GET'])
 def krn_release(release):
     return krn_release_farmer_extra(release, "", "")
@@ -475,12 +303,6 @@ def uefimg_release_farmer_extra_kernel(release, farmer, extra, kernel):
 
 
 
-@app.route('/debug/<release>/<farmer>', methods=['GET'])
-def uefimg_debug_release(release, farmer):
-    return generic_debug_image_generator(release, farmer, "", "mkuefimg.sh", "uefimg.img", "uefiusb-debug.img")
-
-
-
 @app.route('/ipxe/<release>', methods=['GET'])
 def ipxe_release(release):
     return ipxe_release_farmer_extra(release, "", "")
@@ -499,24 +321,6 @@ def ipxe_release_farmer_extra_kernel(release, farmer, extra, kernel):
     print("[+] release: %s, network: %s, extra: %s [kernel: %s]" % (release, farmer, extra, kernel))
     return text_reply(ipxe_script(release, farmer, extra, kernel))
 
-
-@app.route('/provision/<client>')
-def provision_client(client):
-    print("[+] provisioning client: %s" % client)
-
-    db = db_open()
-    t = (client,)
-    c = db.cursor()
-
-    c.execute('SELECT client, release, zerotier, kargs FROM provision WHERE client = ?', t)
-    data = c.fetchone()
-    db.close()
-
-    if data is None:
-        print("[-] no client registered with this identifier")
-        abort(404)
-
-    return text_reply(ipxe_quick_script(data[1], data[2], data[3]))
 
 #
 # Helpers
