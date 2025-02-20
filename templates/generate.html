@@ -102,7 +102,7 @@
           For this <strong>v4 release</strong> right now, only one network is available, more will arrives soon !</p>
 
         <div class="card-deck mb-3">
-          <div class="card mb-3 shadow-sm border-success tf-card tf-card-disabled" id="tf-runmode-prod">
+          <div class="card mb-3 shadow-sm border-success tf-card tf-card-selected" id="tf-runmode-prod">
             <div class="card-header bg-success">
               <h4 class="my-0 font-weight-normal text-center">Main Network</h4>
             </div>
@@ -115,44 +115,42 @@
 
             </div>
             <div class="card-footer bg-white">
-              <button disabled type="button" class="btn btn-lg btn-block btn-success" onclick="setmode('prod');">
-                  <!-- Go live -->
-                  Coming Soon
+              <button type="button" class="btn btn-lg btn-block btn-success" onclick="setmode('prod');">
+                  Go live
               </button>
             </div>
           </div>
 
-          <div class="card mb-3 shadow-sm border-warning tf-card tf-card-disabled" id="tf-runmode-test">
+          <div class="card mb-3 shadow-sm border-warning tf-card" id="tf-runmode-test">
             <div class="card-header bg-warning">
               <h4 class="my-0 font-weight-normal text-center">Test Network</h4>
             </div>
             <div class="card-body">
               <h5 class="card-title text-center">Make it bulletproof</h5>
 
-              <p>Yaaay, you were waiting for this, it's now available for our grid version 3 !</p>
+              <p>Yaaay, you were waiting for this, it's now available for our next-generation grid version 4 !</p>
 
-              <p>The test network is the way to go if you want to enjoy features of our version 3 release
+              <p>The test network is the way to go if you want to enjoy features of our version 4 release
               without going too deep into development and get a nearly stable version.</p>
 
               <p>Thank you to join this next release but keep in mind this is not fully stable yet.</p>
 
             </div>
             <div class="card-footer bg-white">
-              <button disabled type="button" class="btn btn-lg btn-block btn-warning" onclick="setmode('test');">
-                  <!-- Let's test -->
-                  Coming Soon
+              <button type="button" class="btn btn-lg btn-block btn-warning" onclick="setmode('test');">
+                  Let's test
               </button>
             </div>
           </div>
 
-          <div class="card mb-3 shadow-sm border-danger tf-card tf-card-selected" id="tf-runmode-dev">
+          <div class="card mb-3 shadow-sm border-danger tf-card" id="tf-runmode-dev">
             <div class="card-header bg-danger">
               <h4 class="my-0 font-weight-normal text-center">Dev Network</h4>
             </div>
             <div class="card-body">
               <h5 class="card-title text-center">Crashtest</h5>
 
-              <p>Our current version 3 is the next awesome release of the grid. This version includes
+              <p>Our current version 4 is the next awesome release of the grid. This version includes
               real decentralization and lots of new features, but it's still in an early stage.</p>
 
               <p>Thank you to join this next release but keep in mind this is really not stable yet.</p>
@@ -164,7 +162,7 @@
             </div>
           </div>
 
-          <div class="card mb-3 shadow-sm border-info tf-card tf-card-disabled" id="tf-runmode-qa">
+          <div class="card mb-3 shadow-sm border-info tf-card" id="tf-runmode-qa">
             <div class="card-header bg-info">
               <h4 class="my-0 font-weight-normal text-center">QA Network</h4>
             </div>
@@ -177,9 +175,8 @@
 
             </div>
             <div class="card-footer bg-white">
-              <button disabled type="button" class="btn btn-lg btn-block btn-info" onclick="setmode('qa');">
-                  <!-- Go QA -->
-                  Coming Soon
+              <button type="button" class="btn btn-lg btn-block btn-info" onclick="setmode('qa');">
+                Go QA
               </button>
             </div>
           </div>
@@ -187,7 +184,6 @@
         </div>
 
       </div>
-    </div>
     </div>
 
     <div class="jumbotron jumbostep jumbostep4 jumbo-nok" id="jumbofinal">

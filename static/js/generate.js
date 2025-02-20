@@ -5,7 +5,7 @@ var buildlist = ['ipxe', 'iso', 'usb', 'uefi', 'uefimg', 'krn'];
 var finalUrl = '...';
 
 var tfmodes = {"prod": "success", "test": "warning", "dev": "danger", "qa": "info"};
-var tfmode = "dev";
+var tfmode = "prod";
 var farmId = undefined;
 
 function farmerid_invalid() {
