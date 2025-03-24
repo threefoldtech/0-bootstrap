@@ -130,6 +130,33 @@ def generic_image_generator(release, farmer, extra, buildscript, targetfile, fil
 
     return response
 
+def driver_image_generator(release, farmer, extra, targetfile, filename, kernel, pciref):
+    response = make_response("Request failed")
+    srcdir = srcdir_from_filename(targetfile)
+    buildscript = "mkuefidrv.sh"
+
+    with tempfile.TemporaryDirectory() as tmpdir:
+        src = os.path.join(tmpdir, "src")
+
+        print("[+] copying template: %s > %s" % (srcdir, src))
+        call(["cp", "-ar", srcdir, src])
+
+        print("[+] creating ipxe script")
+        with open(os.path.join(tmpdir, "boot.ipxe"), 'w') as f:
+            f.write(ipxe_script(release, farmer, extra, kernel))
+
+        print("[+] building: %s" % buildscript)
+        script = os.path.join(BASEPATH, "scripts", buildscript)
+        call(["bash", script, tmpdir, pciref])
+
+        filecontents = ""
+        with open(os.path.join(tmpdir, targetfile), 'rb') as f:
+            filecontents = f.read()
+
+        response = download_mkresponse(filecontents, filename)
+
+    return response
+
 def generic_image_quickipxe(release, farmer, extra, buildscript, targetfile, filename):
     response = make_response("Request failed")
     srcdir = srcdir_from_filename(targetfile)
@@ -272,6 +299,13 @@ def uefi_release_farmer_extra(release, farmer, extra):
 def uefi_release_farmer_extra_kernel(release, farmer, extra, kernel):
     print("[+] release: %s, network: %s, extra: %s [kernel: %s]" % (release, farmer, extra, kernel))
     return generic_image_generator(release, farmer, extra, "mkuefi.sh", "ipxe.efi", "ipxe-%s.efi" % release, kernel)
+
+
+
+@app.route('/uefidrv/<release>/<farmer>/<extra>/<pciref>', methods=['GET'])
+def uefi_driver_release_farmer_extra(release, farmer, extra, pciref):
+    print("[+] driver release: %s, network: %s, extra: %s" % (release, farmer, extra))
+    return driver_image_generator(release, farmer, extra, "ipxe.efidrv", "ipxe-%s-%s.efidrv" % (release, farmer), None, pciref)
 
 
 
