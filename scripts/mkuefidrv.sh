@@ -22,6 +22,6 @@ pushd ${root}/src
 MKCERT="isrgrootx1.pem,lets-encrypt-r3.pem,lets-encrypt-r3-cross-signed.pem"
 MKTRUST=${MKCERT}
 
-make bin-x86_64-efi/{pciref}.efidrv EMBED=${root}/boot.ipxe CERT=${MKCERT} TRUST=${MKTRUST}
+make bin-x86_64-efi/${pciref}.efidrv EMBED=${root}/boot.ipxe CERT=${MKCERT} TRUST=${MKTRUST}
 
-cp bin-x86_64-efi/{pciref}.efidrv ${root}/ipxe.efidrv
+cp bin-x86_64-efi/${pciref}.efidrv ${root}/ipxe.efidrv
