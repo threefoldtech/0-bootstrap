@@ -93,7 +93,10 @@ def download_net(filename):
 def srcdir_from_filename(targetfile):
     efi = ["ipxe.efi", "uefimg.img"]
     if targetfile in efi:
-       return config["ipxe-template-uefi"]
+        return config["ipxe-template-uefi"]
+
+    if targetfile.endswith(".efidrv"):
+        return config["ipxe-template-uefi"]
 
     return config["ipxe-template"]
 
