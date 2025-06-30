@@ -62,7 +62,7 @@ function update_trigger(initialAllValid) {
 }
 
 async function getFarm(fid) {
-    const endpoint = 'https://graphql.grid.tf/graphql';
+    const endpoint = 'https://graphql.grid.threefold.me/graphql';
 
     const response = await fetch(endpoint, {
         method: 'POST',
