@@ -77,6 +77,11 @@ This is a `Flask` web service, just run the `bootstrap.py` server file. On ubunt
 
 Kernel images will be served from `kernel` directory. Images are in form: `zero-os-BRANCH-ARCH.efi`
 
+## License
+
+This project is licensed under the Apache License 2.0 - see the [LICENSE](LICENSE) file for details.
+Copyright (c) TFTech NV.
+
 ## Configuration
 
 You can customize the service by editing `config.py`:
