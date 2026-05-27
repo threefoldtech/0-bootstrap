@@ -1,10 +1,10 @@
-# 0-Bootstrap
+# ZOS Bootstrap
 
 A network bootstrapping webservice that generates dynamic iPXE scripts, bootable ISO images, USB images, UEFI loaders, and kernel images for bare-metal node provisioning.
 
 ## What this is
 
-0-Bootstrap provides network bootstrapping capabilities for Zero-OS nodes. It delivers initial configuration and boot images over the network, enabling automated operating system provisioning without manual intervention. The service generates custom boot configurations based on node identity and network parameters.
+ZOS Bootstrap provides network bootstrapping capabilities for Zero-OS nodes. It delivers initial configuration and boot images over the network, enabling automated operating system provisioning without manual intervention. The service generates custom boot configurations based on node identity and network parameters.
 
 The webservice is built with Flask and serves as the entry point for nodes joining the infrastructure, producing iPXE scripts, ISO files, USB images, UEFI bootloaders, and directly-bootable kernels on demand.
 
@@ -22,7 +22,7 @@ The webservice is built with Flask and serves as the entry point for nodes joini
 
 ZOS, also known as Zero-OS, is the operating system layer used to run and manage nodes. It provides the low-level runtime environment for workloads, networking, storage, and automation.
 
-0-Bootstrap is the first service a bare-metal node contacts when joining the network. It produces the correct boot artifacts so that ZOS can be fetched and started automatically. The service supports multiple environments (production, test, development, QA) via configurable network profiles.
+ZOS Bootstrap is the first service a bare-metal node contacts when joining the network. It produces the correct boot artifacts so that ZOS can be fetched and started automatically. The service supports multiple environments (production, test, development, QA) via configurable network profiles.
 
 ## Relation to ThreeFold
 
